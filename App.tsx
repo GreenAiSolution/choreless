@@ -33,17 +33,6 @@ const SERVICES: {
     keywords: ["review", "reputation", "yelp", "google", "rating", "respond"],
   },
   {
-    name: "Invoice Chaser",
-    lane: "Business",
-    tagline: "Your money, politely retrieved.",
-    deliverable: "Overdue invoices chased with escalating, tone-matched emails; payment links included; a cash-recovered report at month end.",
-    whyNow: "Late payments are the #1 cash-flow killer for small businesses.",
-    credits: 2,
-    turnaround: "Runs on due dates",
-    autopilot: true,
-    keywords: ["invoice", "overdue", "payment", "owe", "chase", "unpaid", "money", "collect"],
-  },
-  {
     name: "Social Autopilot",
     lane: "Business",
     tagline: "A month of posts. Designed, written, scheduled.",
@@ -53,17 +42,6 @@ const SERVICES: {
     turnaround: "48h",
     autopilot: true,
     keywords: ["social", "post", "instagram", "facebook", "content", "calendar", "tiktok"],
-  },
-  {
-    name: "Competitor Radar",
-    lane: "Business",
-    tagline: "Know their next move first.",
-    deliverable: "A weekly brief on your competitors' pricing changes, new offers, reviews and ad activity — with one recommended counter-move.",
-    whyNow: "Markets shift weekly now. Annual competitor research is dead.",
-    credits: 2,
-    turnaround: "Runs weekly",
-    autopilot: true,
-    keywords: ["competitor", "rival", "market", "pricing", "spy", "watch"],
   },
   {
     name: "Clip Factory",
@@ -76,76 +54,36 @@ const SERVICES: {
     keywords: ["video", "clip", "shorts", "podcast", "edit", "youtube", "reels", "cut"],
   },
   {
-    name: "Repurpose Engine",
-    lane: "Creator",
-    tagline: "Make everything from anything.",
-    deliverable: "One piece of content becomes a newsletter, an X thread, a LinkedIn post and a blog article — all in your trained voice profile.",
-    whyNow: "Multi-platform presence is table stakes; writing it all isn't.",
-    credits: 3,
-    turnaround: "24h",
-    keywords: ["repurpose", "newsletter", "thread", "blog", "linkedin", "article"],
-  },
-  {
-    name: "Brand Kit Lab",
-    lane: "Creator",
-    tagline: "Your look, on demand.",
-    deliverable: "Thumbnails, banners, and post templates generated to match your locked visual identity — unlimited revisions until it's right.",
-    whyNow: "CTR lives and dies on the thumbnail. Designers cost $50+ each.",
+    name: "Refund & Comp Recovery",
+    lane: "Life",
+    tagline: "We get your money back — automatically.",
+    deliverable: "Purchases, flights, deliveries and outages watched non-stop; price-adjustment claims, delay compensation, outage credits and wrong-charge disputes filed for you. You spend credits only when it actually recovers money.",
+    whyNow: "Every company owes refunds they bank on you never claiming.",
     credits: 2,
-    turnaround: "12h",
-    keywords: ["thumbnail", "banner", "design", "logo", "brand", "template", "graphic"],
-  },
-  {
-    name: "Sponsor Kit",
-    lane: "Creator",
-    tagline: "Always ready to pitch.",
-    deliverable: "A media kit that updates itself with your live stats, plus researched sponsor matches and personalized outreach drafts each month.",
-    whyNow: "Brand deals are the top creator revenue line — and the least systematized.",
-    credits: 4,
-    turnaround: "Runs monthly",
+    turnaround: "Runs continuously",
     autopilot: true,
-    keywords: ["sponsor", "media kit", "brand deal", "pitch", "outreach"],
+    keywords: ["refund", "price drop", "money back", "compensation", "delay", "outage", "chargeback", "reimburse", "credit", "claim"],
   },
   {
-    name: "Inbox Concierge",
+    name: "Digital Footprint Cleaner",
     lane: "Life",
-    tagline: "Wake up to three emails, not three hundred.",
-    deliverable: "Daily triage of your inbox: replies drafted and waiting, junk unsubscribed, and a morning digest of the 3 things that actually need you.",
-    whyNow: "The average professional loses 2.5 hours a day to email.",
-    credits: 3,
-    turnaround: "Runs daily",
+    tagline: "Disappear from the databases.",
+    deliverable: "Removed from data-broker sites, deletion requests filed, zombie accounts closed, mass-unsubscribes done — then monitored monthly so you don't quietly get re-listed.",
+    whyNow: "Your personal data is bought and sold daily, and almost no one cleans it up.",
+    credits: 6,
+    turnaround: "Sweep in 72h, then monthly",
     autopilot: true,
-    keywords: ["email", "inbox", "unsubscribe", "triage", "reply", "gmail"],
+    keywords: ["data broker", "delete", "privacy", "remove me", "unsubscribe", "footprint", "disappear", "opt out", "personal information", "spam"],
   },
   {
-    name: "Paperwork Agent",
+    name: "Hard Conversation Ghostwriter",
     lane: "Life",
-    tagline: "Forms filed. Disputes disputed.",
-    deliverable: "Subscription cancellations, billing disputes, insurance claims, government forms — drafted, filed through the right channel, and tracked to resolution.",
-    whyNow: "Companies weaponize friction. We automate it away.",
+    tagline: "The email you're dreading — written for you.",
+    deliverable: "The message you can't bring yourself to write — firing a client, chasing money owed, a complaint, a raise request, a vendor breakup — written in exactly the right tone, with the follow-up ready if they push back.",
+    whyNow: "The messages that cost you sleep are the ones most worth outsourcing.",
     credits: 2,
-    turnaround: "24h",
-    keywords: ["cancel", "dispute", "claim", "form", "refund", "insurance", "subscription", "charge"],
-  },
-  {
-    name: "Career Engine",
-    lane: "Life",
-    tagline: "Every application, tailored.",
-    deliverable: "Paste a job posting: get a tailored resume, cover letter and interview prep brief, plus a tracker across every application.",
-    whyNow: "AI screening means generic resumes die on arrival.",
-    credits: 2,
-    turnaround: "12h",
-    keywords: ["resume", "job", "cover letter", "interview", "career", "application", "cv"],
-  },
-  {
-    name: "Life Logistics",
-    lane: "Life",
-    tagline: "The personal assistant tier of life.",
-    deliverable: "Booking-ready travel itineraries, appointment wrangling, gift planning, and price-drop monitoring with automatic refund claims.",
-    whyNow: "Admin is the tax on modern life. Stop paying it in hours.",
-    credits: 3,
-    turnaround: "24h",
-    keywords: ["travel", "trip", "itinerary", "appointment", "gift", "book", "plan", "flight", "hotel"],
+    turnaround: "6h",
+    keywords: ["email", "write", "dreading", "hard", "fire", "raise", "complaint", "conversation", "message", "quit", "breakup", "confront", "apology", "text", "awkward"],
   },
 ];
 
@@ -164,17 +102,6 @@ const DEEP: Record<string, { scene: string; steps: [string, string][]; lands: st
     lands: ["Every review answered within a week, in your voice", "Operations alerts when complaints cluster", "Monthly reputation report with complaint heatmap"],
     finePrint: "Needs: your Google Business / Yelp / Facebook connections and 10 minutes of tone questions at setup.",
   },
-  "Invoice Chaser": {
-    scene: "You did the work in March. It's July. The awkward part of chasing money isn't writing the email — it's calibrating it: firm enough to get paid, warm enough to get hired again. That calibration is exactly what a pipeline that has read your entire history with this client does better than your 11pm resentment does.",
-    steps: [
-      ["Rank the ledger", "Overdue invoices sorted by age, amount, and relationship value — the client worth keeping gets a different ladder than the serial late-payer."],
-      ["Match the tone", "Each sequence is written from your email history with that client: first a nudge, then a reminder, then firm — never rude, never groveling."],
-      ["Send with teeth", "Every email carries a one-click payment link. Escalations schedule themselves until the invoice closes."],
-      ["Count the cash", "Month-end report: what was recovered, what's still aging, and who should be on prepayment terms next time."],
-    ],
-    lands: ["Tone-matched chase sequences, sent from your address", "Payment links in every message", "Cash-recovered report with prepayment recommendations"],
-    finePrint: "Needs: QuickBooks / Stripe / a spreadsheet of invoices — whatever you've got, it adapts.",
-  },
   "Social Autopilot": {
     scene: "The businesses that win on social aren't the cleverest — they're the ones still posting in week forty. You know this. You also know you will not be designing a carousel about your seasonal special at midnight on a Sunday. So the calendar builds itself: thirty days of posts that look like you hired someone, because in a sense you did.",
     steps: [
@@ -185,17 +112,6 @@ const DEEP: Record<string, { scene: string; steps: [string, string][]; lands: st
     ],
     lands: ["30 designed, captioned, scheduled posts", "A content strategy note explaining why each week pushes what it pushes", "Monthly performance recap feeding the next calendar"],
     finePrint: "Needs: your social accounts connected and a brand kit (we build it at onboarding if you don't have one).",
-  },
-  "Competitor Radar": {
-    scene: "Your competitor dropped their prices on Thursday. You found out three weeks later from a customer who'd already left. Never again: now a quiet watcher reads their website, their socials, their reviews and their ad library every week — and every Monday you get one page that ends with a single recommended move.",
-    steps: [
-      ["Watch everything", "Competitor websites, menus, pricing pages, social feeds, review streams and public ad libraries — diffed weekly against last week."],
-      ["Separate signal from noise", "A new logo is noise. A new offer, a price drop, a hiring spree, a wave of bad reviews — that's signal, and it gets ranked."],
-      ["Read their reviews too", "Their unhappy customers are your clearest map of what to do differently — mined and summarized."],
-      ["One counter-move", "Every brief ends with a single recommendation: match, ignore, or exploit. No 40-page decks."],
-    ],
-    lands: ["A one-page Monday brief on up to 5 competitors", "Ranked changes with evidence links", "One recommended counter-move per week"],
-    finePrint: "Needs: a list of competitors — or we'll identify them from your market at setup.",
   },
   "Clip Factory": {
     scene: "Somewhere in your 74-minute episode is the 40-second moment that would stop a million thumbs. You know it's in there. You also know finding it means scrubbing timelines until 2am. So don't: upload once, and the factory finds the peaks, cuts them, captions them, frames them vertical, and tells you which one to post first — with a number attached.",
@@ -208,82 +124,38 @@ const DEEP: Record<string, { scene: string; steps: [string, string][]; lands: st
     lands: ["8–12 captioned vertical shorts per upload", "A thumbnail for each", "Retention scores + recommended posting order"],
     finePrint: "Needs: a video link or upload. Works from YouTube, Drive, or a raw file.",
   },
-  "Repurpose Engine": {
-    scene: "You said something brilliant on camera and it will die there unless it becomes a newsletter, a thread, a LinkedIn post and a blog entry — four rewrites you will absolutely not do. The engine doesn't copy-paste your transcript with different line breaks. It rewrites the idea natively for each platform, in a voice profile trained on the way you actually write.",
+  "Refund & Comp Recovery": {
+    scene: "You paid $340 for the flight. It dropped to $280 the next morning, and the airline is delighted you'll never notice. The delivery came four days late — that's a refund you're owed and will never claim. The internet was down six hours — that's a bill credit sitting there unasked. This service's whole job is to notice, and to ask, so a slow trickle of your own money finds its way back without you lifting a finger.",
     steps: [
-      ["Extract the ideas", "The argument, the stories, the one-liners — pulled from the source and ranked by strength."],
-      ["Rewrite natively", "A thread is built around a hook-and-payoff. A newsletter is built around intimacy. A blog post around search. Same idea, four different crafts."],
-      ["Pass the voice gate", "Every piece is QA'd against your trained voice profile — vocabulary, rhythm, opinions. If it doesn't sound like you, it doesn't ship."],
-      ["Package for posting", "Formatted for each platform, with suggested timing. One approval, four channels fed."],
+      ["Watch the receipts", "Purchases, flights, packages and services are monitored against prices, delivery promises and uptime — the moment one slips, it's flagged as recoverable money."],
+      ["Know the rule", "Airlines owe delay comp under specific rules; retailers honor price-adjustment windows; ISPs credit outages. Each claim is filed citing the exact policy that forces a yes."],
+      ["File on your say-so", "Anything account-touching comes back for one-tap approval; the claim goes to the channel that actually pays, with the paper trail retained."],
+      ["Bank it", "A running ledger of what's been recovered this month — real dollars back, and credits spent only on the wins."],
     ],
-    lands: ["Newsletter issue, X thread, LinkedIn post, blog article", "Each in your trained voice", "Suggested publish timing per platform"],
-    finePrint: "Needs: one source piece (video, podcast, or long post) and your voice profile from onboarding.",
+    lands: ["Price-drop, delay, outage and wrong-charge claims filed for you", "One-tap approval on anything account-touching", "A monthly ledger of money actually recovered"],
+    finePrint: "Results-priced: credits are spent only when a claim actually recovers money. Needs read access to the receipts/accounts you want watched.",
   },
-  "Brand Kit Lab": {
-    scene: "Your last thumbnail took three hours and still looked like a ransom note. Meanwhile the channel you're losing to ships a perfect one every day, because they pay a designer $60 a pop. The Lab locks your visual identity once — colors, type, face treatment, the works — and then produces on demand, unlimited revisions, until it's exactly right.",
+  "Digital Footprint Cleaner": {
+    scene: "Type your own name into Google with a private window open. The home address. The old phone number. The relatives listed like a family tree you didn't publish. Data brokers assembled that for anyone with $2 and a grudge — and they'll rebuild it the week after you remove it, which is why this isn't a one-time scrub but a standing watch that makes you quietly, durably harder to find.",
     steps: [
-      ["Lock the identity", "One session captures your palette, type, logo rules and reference images into a locked identity file every job obeys."],
-      ["Generate wide", "Each request produces multiple directions — not one take-it-or-leave-it comp."],
-      ["Test before you see it", "Contrast, legibility-at-thumbnail-size, and CTR heuristics filter the weak options before they reach you."],
-      ["Revise until right", "Unlimited revisions inside the task. 'Make my face bigger and the text angrier' is a valid instruction."],
+      ["Map your exposure", "A sweep across the major data-broker networks, people-search sites and breach databases surfaces everywhere you're listed — with links."],
+      ["File the removals", "Opt-out and deletion requests submitted to each, using the specific legal request each one is required to honor — not the polite form they hope you'll use."],
+      ["Close the zombies", "Dormant accounts you forgot, newsletters you never read, logins tied to old breaches — closed and unsubscribed at the source."],
+      ["Keep watch", "Brokers re-list you constantly. Monthly re-scans catch it and re-file, so the cleanup holds instead of quietly undoing itself."],
     ],
-    lands: ["Thumbnails, banners, and post templates on demand", "All obeying your locked identity file", "Source files included — you own everything"],
-    finePrint: "Needs: your existing logo/brand assets, or 20 minutes to build the identity file from scratch.",
+    lands: ["Removal from the major data-broker and people-search sites", "Zombie accounts closed, mass-unsubscribes done", "Monthly monitoring + re-removal when you get re-listed"],
+    finePrint: "Results-priced after the initial sweep: monitoring credits spend only when a new listing is found and removed. Needs the name/aliases and details you want scrubbed.",
   },
-  "Sponsor Kit": {
-    scene: "A brand emailed asking for your media kit and you sent a PDF with numbers from last spring. That silence you heard afterward was money leaving. Now the kit rebuilds itself monthly from your live stats, and alongside it comes a list of brands actively sponsoring creators your size — each with an outreach draft that mentions their last campaign, not 'Dear Partnerships Team.'",
+  "Hard Conversation Ghostwriter": {
+    scene: "It's the message that's been sitting in your drafts for a week — the client you have to let go, the friend who still owes you $400, the landlord who won't fix the heat, the raise you've earned and can't figure out how to ask for. The words aren't hard because you don't know what you mean. They're hard because tone is everything and you're too close to it. Describe the situation once; get back something that says the hard thing cleanly, keeps the door open where it should be, and closes it where it must.",
     steps: [
-      ["Pull live numbers", "Subscribers, views, engagement, audience demographics — pulled fresh, never stale."],
-      ["Rebuild the kit", "A designed media kit in your brand identity, versioned monthly, always send-ready."],
-      ["Hunt the matches", "Brands currently spending on creators in your niche and size band — found via their actual campaign activity."],
-      ["Draft the pitch", "Personalized outreach referencing the brand's recent campaigns, with your rates positioned confidently."],
+      ["Hear the whole situation", "The relationship, the history, the outcome you actually want, and the lines you're afraid to cross — captured in a couple of questions."],
+      ["Find the register", "Firm without cruelty, warm without weakness, final without burning the bridge — the exact register the moment needs, matched to your natural voice."],
+      ["Draft the message", "The email, text, or letter — ready to send, with the one hard sentence handled instead of hedged into meaninglessness."],
+      ["Arm the follow-up", "The reply for when they push back, guilt-trip, or negotiate — drafted in advance so you're never caught flat in the moment that counts."],
     ],
-    lands: ["A self-updating media kit", "Monthly list of matched, actively-spending sponsors", "Personalized outreach drafts ready to send"],
-    finePrint: "Needs: your channel/social accounts connected. Rates optional — we'll suggest a range from comparable creators.",
-  },
-  "Inbox Concierge": {
-    scene: "There are 300 unread emails and three of them matter. The tragedy of email isn't volume — it's that the three are buried in the 297. Every morning at 6:45, the 297 are already handled: replies drafted, junk unsubscribed, receipts filed. What you open is a digest that says: these three things need you. That's the whole inbox.",
-    steps: [
-      ["Overnight triage", "Every message classified: needs-you, needs-a-reply-we-can-draft, informational, junk."],
-      ["Draft in your voice", "Replies written from your sent-mail history — your sign-offs, your bluntness level, your exclamation-point policy."],
-      ["Prune ruthlessly", "Junk unsubscribed at the source, not filtered. Your inbox shrinks structurally, week over week."],
-      ["The 6:45 digest", "Three things that need you, five drafts awaiting one-tap send, and nothing else."],
-    ],
-    lands: ["A daily morning digest of what actually needs you", "Replies drafted and waiting for one tap", "A structurally shrinking inbox"],
-    finePrint: "Needs: Gmail or Outlook connected with scoped, revocable permissions. Drafts never send without you.",
-  },
-  "Paperwork Agent": {
-    scene: "The gym requires cancellation by certified letter. The airline's refund form rejects your browser. The insurer wants Form 4B, which references Form 2A, which doesn't exist. This friction is not an accident — it's a business model. The agent's entire job is to be more stubborn than their process, on your behalf, without you feeling any of it.",
-    steps: [
-      ["Find the real channel", "Every company has one channel that actually works — a specific form, address, or magic phrase. The agent knows or finds it."],
-      ["Draft with the right words", "Disputes cite the card network rule. Cancellations cite the contract clause. Claims cite the policy language. Words that make processors comply."],
-      ["File and prove it", "Submitted through the proper channel with timestamps and copies retained — a paper trail built like it might be needed."],
-      ["Chase to resolution", "No response in their stated window? It escalates automatically. The task closes when the matter closes, not when the form is sent."],
-    ],
-    lands: ["Filed cancellations, disputes, claims and forms", "A tracked case with full paper trail", "Escalations until actual resolution"],
-    finePrint: "Needs: the details of the situation and any documents. Anything requiring your signature comes back for one tap.",
-  },
-  "Career Engine": {
-    scene: "Your resume is being read by software before any human sees it, and the software is looking for twelve specific words. Sending the same PDF to forty jobs is how good people vanish into applicant tracking systems. Paste a posting instead: twenty minutes later there's a resume rebuilt around this job, a cover letter that mentions something true about this company, and a brief on what they'll ask you.",
-    steps: [
-      ["Decode the posting", "The role's real keywords and priorities extracted — including the unwritten ones implied by the team and seniority."],
-      ["Rebuild, never fabricate", "Your actual experience reframed and reordered for this role. Truthful always — it's your history, weaponized, not invented."],
-      ["Write the letter that gets read", "Three tight paragraphs referencing the company's actual work. No 'I am writing to express my interest.'"],
-      ["Prep the interview", "Likely questions from the role and your gaps, with suggested answers drawn from your real stories."],
-    ],
-    lands: ["A tailored resume per posting (ATS-tested formatting)", "A specific, human cover letter", "Interview brief + a tracker across all applications"],
-    finePrint: "Needs: your current resume once at setup. Then just paste postings.",
-  },
-  "Life Logistics": {
-    scene: "The trip is booked, which means the work has just begun: the confirmation emails, the seat that changed, the hotel that quietly dropped its rate $60 after you paid. Life admin is a thousand paper cuts that nobody gets credit for handling. Consider it handled — itineraries built to your taste, appointments wrangled, refunds claimed while you live your actual life.",
-    steps: [
-      ["Learn your taste", "Aisle or window, mornings protected, kids' nap schedule, the airline you're loyal to — preferences remembered forever."],
-      ["Build booking-ready plans", "Itineraries with real availability, prices, and a plan B for the leg most likely to go wrong."],
-      ["Wrangle the calendar", "Appointment scheduling ping-pong handled by email on your behalf — you get the confirmed slot, not the thread."],
-      ["Watch the money", "Prices monitored after booking; drops trigger refund claims automatically. Found money, zero effort."],
-    ],
-    lands: ["Booking-ready itineraries with backup plans", "Appointments confirmed without the email ping-pong", "Automatic price-drop refund claims"],
-    finePrint: "Needs: calendar and email access, plus your preferences (gathered once, refined forever).",
+    lands: ["The message you're dreading, written and send-ready", "A follow-up drafted for when they push back", "The right register — firm, warm, or final — matched to your voice"],
+    finePrint: "Needs: the situation in your words and any thread it's replying to. Nothing sends without you — the words are yours to use or edit.",
   },
 };
 
@@ -295,22 +167,16 @@ const PLAN_CREDITS: Record<Plan, number> = { Starter: 10, Pro: 30, Business: 100
 
 /* Which plan unlocks each service */
 const MIN_TIER: Record<string, Plan> = {
-  "Inbox Concierge": "Starter",
-  "Paperwork Agent": "Starter",
-  "Career Engine": "Starter",
-  "Life Logistics": "Starter",
-  "Invoice Chaser": "Starter",
-  "Brand Kit Lab": "Starter",
-  "Reputation Autopilot": "Pro",
-  "Social Autopilot": "Pro",
+  "Hard Conversation Ghostwriter": "Starter",
+  "Refund & Comp Recovery": "Starter",
   "Clip Factory": "Pro",
-  "Repurpose Engine": "Pro",
-  "Sponsor Kit": "Pro",
-  "Competitor Radar": "Business",
+  "Digital Footprint Cleaner": "Pro",
+  "Social Autopilot": "Pro",
+  "Reputation Autopilot": "Business",
 };
 const unlocked = (svc: string, plan: Plan) => PLAN_RANK[plan] >= PLAN_RANK[MIN_TIER[svc]];
 
-/* ============ SERVICE RUNTIMES (the 12 functioners) ============ */
+/* ============ SERVICE RUNTIMES (the 6 functioners) ============ */
 
 type Field = { key: string; label: string; type: "text" | "textarea" | "select"; placeholder?: string; options?: string[] };
 type Block = { h: string; lines: string[] };
@@ -360,42 +226,6 @@ const RUNTIME: Record<string, Runtime> = {
     },
   },
 
-  "Invoice Chaser": {
-    fields: [
-      { key: "client", label: "Client name", type: "text", placeholder: "Meadow Co." },
-      { key: "amount", label: "Amount owed", type: "text", placeholder: "$1,850" },
-      { key: "days", label: "Days overdue", type: "select", options: ["15", "30", "60", "90+"] },
-      { key: "rel", label: "Relationship", type: "select", options: ["Long-time client", "New client", "Repeat late payer"] },
-    ],
-    generate: (v) => {
-      const soft = v.rel !== "Repeat late payer";
-      return [
-        { h: `Email 1 — the nudge (sends today)`, lines: [
-          `Subject: Quick one — invoice for ${v.amount}`,
-          soft
-            ? `Hi ${v.client} team — hope things are good on your end. The ${v.amount} invoice is showing ${v.days} days past due, which I'm guessing just slipped through. Payment link below — takes about a minute. Thanks!`
-            : `Hi ${v.client} team — following up on the ${v.amount} invoice, now ${v.days} days past due. The payment link below settles it in about a minute. Appreciate you closing this out this week.`,
-          `[ Pay ${v.amount} now → ]`,
-        ]},
-        { h: "Email 2 — the reminder (auto-sends in 7 days if unpaid)", lines: [
-          `Subject: Second notice — ${v.amount} outstanding`,
-          `Hi ${v.client} team — circling back on the ${v.amount} invoice. We want to keep things easy on both sides, so if there's an issue with the invoice itself, reply here and we'll sort it. Otherwise, the link below closes it out today.`,
-        ]},
-        { h: "Email 3 — the firm one (auto-sends in 14 days if unpaid)", lines: [
-          `Subject: Final notice before escalation — ${v.amount}`,
-          `Hi ${v.client} — the ${v.amount} invoice remains unpaid after multiple notices. To avoid late fees and a pause on future work, payment is required by end of week. If payment has been sent, forward the confirmation and we'll reconcile immediately.`,
-        ]},
-        { h: "Escalation plan", lines: [
-          soft
-            ? `• ${v.rel} — the ladder stays courteous through Email 2; firmness arrives only at Email 3`
-            : `• Repeat late payer — the ladder starts firmer and Email 3 recommends prepayment terms for future work`,
-          "• Each email carries a one-click payment link and logs opens",
-          "• If Email 3 expires: you get an escalation card with options (late fee, collections letter, write-off) — your call, one tap",
-        ]},
-      ];
-    },
-  },
-
   "Social Autopilot": {
     fields: [
       { key: "biz", label: "Your business", type: "text", placeholder: "Kettle & Co. — handmade candles" },
@@ -423,36 +253,6 @@ const RUNTIME: Record<string, Runtime> = {
     },
   },
 
-  "Competitor Radar": {
-    fields: [
-      { key: "biz", label: "Your business", type: "text", placeholder: "Bluebird Café, Portland" },
-      { key: "comp", label: "Competitors to watch (comma-separated)", type: "text", placeholder: "Stumptown Corner, The Daily Perk" },
-      { key: "worry", label: "What keeps you up at night?", type: "select", options: ["Their pricing", "Their reviews are better", "Their new offers", "Their ads are everywhere"] },
-    ],
-    generate: (v) => {
-      const comps = (v.comp || "your competitors").split(",").map((c) => c.trim()).filter(Boolean);
-      const c1 = comps[0] || "Competitor A"; const c2 = comps[1] || comps[0] || "Competitor B";
-      return [
-        { h: "Monday brief — sample edition", lines: [
-          `🔴 SIGNAL — ${c1} changed pricing on 3 core items this week (avg −8%). Their reviews mention 'value' 2× more than last month. This is a positioning move, not a sale.`,
-          `🟡 WATCH — ${c2} started running Meta ads Tuesday (4 creatives, all video, all targeting your zip). Small budget so far — a test, not a push. We'll flag if spend jumps.`,
-          `🟢 NOISE — ${c1} redesigned their logo. Customers don't care; neither should you.`,
-          `📉 THEIR WEAK SPOT — ${c2}'s last 11 reviews: 5 mention slow service at peak hours. That's your opening, not theirs.`,
-        ]},
-        { h: "The counter-move (one, not forty)", lines: [
-          v.worry === "Their pricing"
-            ? `Don't match ${c1}'s cut — you lose a price war against nothing. Instead: bundle. A bundle at your current margin reads as generosity without repricing anything, and it's invisible to their comparison.`
-            : v.worry === "Their reviews are better"
-            ? `Their review lead is volume, not quality. Turn on review-ask automation for your happiest moments (post-purchase, post-compliment). 15 fresh reviews beats their stale 200 in local ranking recency.`
-            : v.worry === "Their new offers"
-            ? `Their offer is broad; go narrow. One sharply-specific offer for your best segment beats their something-for-everyone — and their unhappy 'slow at peak' reviewers are exactly who to aim it at.`
-            : `Their ads buy attention; your speed can steal the conversion. Peak-hour promise ("in and out in 10") aimed at ${c2}'s slow-service complainers turns their ad spend into your foot traffic.`,
-        ]},
-        { h: "Every week, on autopilot", lines: [`• ${comps.length || 2} competitors watched: sites, socials, reviews, ad libraries — diffed weekly`, "• Ranked signal/watch/noise so you read one page, not forty", "• One recommended move per week. Ignore freely — it keeps coming."] },
-      ];
-    },
-  },
-
   "Clip Factory": {
     fields: [
       { key: "topic", label: "What's the video about?", type: "textarea", placeholder: "Episode 42: I interviewed a burnout coach about why high performers crash…" },
@@ -476,168 +276,117 @@ const RUNTIME: Record<string, Runtime> = {
     },
   },
 
-  "Repurpose Engine": {
+  "Refund & Comp Recovery": {
     fields: [
-      { key: "idea", label: "Paste the core idea / key passage", type: "textarea", placeholder: "Most productivity advice fails because it's designed for people with no obligations…" },
-      { key: "voice", label: "Voice", type: "select", options: ["Punchy", "Thoughtful", "Contrarian"] },
+      { key: "what", label: "What are we recovering on?", type: "select", options: ["A price drop after I bought", "A late flight / delivery", "An internet or service outage", "A wrong or double charge"] },
+      { key: "item", label: "What was it & how much?", type: "text", placeholder: "Flight to Denver — $340" },
+      { key: "when", label: "When did it happen?", type: "select", options: ["This week", "This month", "1–3 months ago"] },
     ],
     generate: (v) => {
-      const core = excerpt(v.idea || "your idea", 12);
-      const vw = v.voice === "Punchy" ? "short. sharp. no wasted words." : v.voice === "Contrarian" ? "against the grain, receipts attached." : "measured, generous, sure of itself.";
+      const kind = v.what || "";
+      const isPrice = kind.startsWith("A price");
+      const isLate = kind.includes("late");
+      const isOutage = kind.includes("outage");
       return [
-        { h: "X thread (5 of 8 tweets)", lines: [
-          `1/ ${core} — and almost everyone gets this backwards. 🧵`,
-          `2/ The common advice assumes a life you don't have. That's not a small flaw. It's the whole problem.`,
-          `3/ Here's what actually happens when real constraints meet ideal systems: (story beat pulled from your source)`,
-          `4/ The fix isn't more discipline. It's a system that expects you to fail on Tuesdays.`,
-          `5/ Steal this: (the single most practical line from your source, quoted verbatim)`,
+        { h: "The rule that forces a yes", lines: [
+          isPrice ? `• ${v.item || "This purchase"} likely falls inside a price-adjustment window most retailers honor but never advertise. We cite their own policy back to them and request the difference refunded to your original payment.`
+          : isLate ? `• ${v.item || "This trip/delivery"} — carriers owe compensation for delays past defined thresholds under specific regulations. We file citing the exact rule and delay length, not a vague complaint.`
+          : isOutage ? `• ${v.item || "This service"} — providers credit outages on request but bank on you not asking. We calculate the pro-rated credit and demand it in writing.`
+          : `• ${v.item || "This charge"} — a formal dispute citing the card network's rules goes to the billing channel that must respond, with your issuer ready to CC if they stall.`,
         ]},
-        { h: "Newsletter opener", lines: [`I want to tell you about the moment I stopped believing ${core.toLowerCase().replace(/\.$/, "")} — because the way it fell apart says more than the idea ever did. (continues 600–800 words, in your voice: ${vw})`] },
-        { h: "LinkedIn post", lines: [`Unpopular opinion from someone who's tested it: ${core}`, `Three observations from the field → one uncomfortable conclusion → a question that makes commenters do your distribution for you.`] },
-        { h: "Blog outline (SEO-shaped)", lines: ["• H1: the claim, phrased how people search it", "• H2: Why the standard advice fails (your story)", "• H2: What works instead (the framework, named)", "• H2: How to start this week (3 steps)", "• FAQ block targeting the long-tail questions"] },
-        { h: "Voice gate", lines: [`Every piece above is QA'd against your trained voice profile (${v.voice.toLowerCase()}) — vocabulary, rhythm, opinions. If it doesn't sound like you, it doesn't ship.`] },
+        { h: "Drafted claim (files on your one tap)", lines: [
+          `Re: ${isPrice ? "Price adjustment request" : isLate ? "Delay compensation claim" : isOutage ? "Service outage credit" : "Formal charge dispute"} — ${v.item || "[item]"}`,
+          isPrice ? `"I purchased the above ${(v.when || "recently").toLowerCase()} and the price has since dropped. Per your price-adjustment policy, I request the difference refunded to my original payment method within your stated window."`
+          : isLate ? `"The above was delayed beyond the threshold at which compensation is owed. I am claiming the compensation due under the applicable regulation and request written confirmation and payment within the mandated period."`
+          : isOutage ? `"Service was interrupted for a material period ${(v.when || "recently").toLowerCase()}. I request a pro-rated credit for the outage applied to my next statement, per your service terms."`
+          : `"I am formally disputing the above charge under the card network's dispute rules and applicable billing law, and request written resolution within 30 days."`,
+        ]},
+        { h: "Then it just… watches", lines: [
+          "• The claim is filed to the channel that actually pays and tracked to resolution",
+          "• Silent past their window → automatic escalation (regulator, card issuer, or supervisor as fits)",
+          "• You're charged credits only if it recovers money — a running ledger shows what came back",
+        ]},
       ];
     },
   },
 
-  "Brand Kit Lab": {
+  "Digital Footprint Cleaner": {
     fields: [
-      { key: "name", label: "Channel / brand name", type: "text", placeholder: "The Honest Kitchen" },
-      { key: "colors", label: "Your colors", type: "text", placeholder: "Forest green, cream, a hit of orange" },
-      { key: "words", label: "Three words for your style", type: "text", placeholder: "Warm, handmade, confident" },
-      { key: "asset", label: "What do you need?", type: "select", options: ["Thumbnail", "Banner", "Post template"] },
-    ],
-    generate: (v) => [
-      { h: `Three ${(v.asset || "asset").toLowerCase()} directions (renders attached in a real run)`, lines: [
-        `A · "The Stare" — tight face crop left third, ${v.colors || "your palette"} split background, 3-word overlay max in your display type. Highest CTR pattern for ${v.words || "your"} energy; the eyes do the clicking.`,
-        `B · "The Object" — the subject isolated dead-center on cream, one accent bar. ${v.words ? v.words.split(",")[0] : "Clean"} to the point of confidence. Reads at 120px; most thumbnails don't.`,
-        `C · "The Tease" — before/after diagonal split, arrow drawn slightly wrong on purpose (handmade > polished for your brand). Curiosity-gap overlay: 2 words + '…'`,
-      ]},
-      { h: "Why these will look like YOU", lines: [`• All three obey ${v.name || "your"} locked identity file: palette (${v.colors || "captured at setup"}), type, logo rules, face treatment`, "• Contrast + legibility tested at thumbnail size before you ever see them", "• 'Make my face bigger and the text angrier' is a valid revision. Unlimited, inside the task."] },
-      { h: "You own everything", lines: ["• Source files delivered with every asset", "• The identity file is exportable — no hostage branding"] },
-    ],
-  },
-
-  "Sponsor Kit": {
-    fields: [
-      { key: "niche", label: "Your niche", type: "text", placeholder: "Home cooking for busy parents" },
-      { key: "size", label: "Audience size", type: "select", options: ["Under 10k", "10k–100k", "100k–1M", "1M+"] },
-      { key: "platform", label: "Main platform", type: "select", options: ["YouTube", "Instagram", "TikTok", "Newsletter"] },
-    ],
-    generate: (v) => [
-      { h: "Your media kit, always current", lines: [`• Live ${v.platform} stats pulled monthly — never send stale numbers again`, `• Audience story: who they are, what they buy, why they trust you on ${v.niche || "your niche"}`, "• Designed in your brand kit; versioned so you can see your own growth"] },
-      { h: "This month's matched sponsors (sample archetypes)", lines: [
-        `① The category-native: a ${v.niche ? v.niche.toLowerCase() : "niche"} brand already sponsoring creators in the ${v.size} band — warm, obvious, fastest yes.`,
-        `② The adjacent mover: a brand one category over whose customers are your audience (found via their actual campaign activity, not guesswork).`,
-        `③ The upstart with budget: recently funded, buying its first creator placements, pays above market for exactly your credibility.`,
-      ]},
-      { h: "Outreach draft (personalized per brand in a real run)", lines: [`Subject: Your [campaign name] campaign + my ${v.platform} audience`, `Hi [name] — I watched your recent creator campaign and there's a gap in it my audience fills: [specific overlap]. My ${v.size} ${v.platform} audience of ${v.niche ? v.niche.toLowerCase() + " loyalists" : "loyalists"} converts on exactly this. Media kit attached — the rates on p.3 hold through [date].`, "— No 'Dear Partnerships Team.' Ever."] },
-    ],
-  },
-
-  "Inbox Concierge": {
-    fields: [
-      { key: "name", label: "Your name", type: "text", placeholder: "Jaden" },
-      { key: "flavor", label: "What's your inbox like?", type: "select", options: ["Client-heavy", "Newsletter avalanche", "Internal chaos", "All of it"] },
-      { key: "style", label: "Reply style", type: "select", options: ["Brief & direct", "Warm & chatty"] },
-    ],
-    generate: (v) => [
-      { h: `Tomorrow, 6:45 AM — ${v.name || "your"} digest`, lines: [
-        "NEEDS YOU (3):",
-        "① Client X asked for a scope change — I drafted a yes-with-boundaries reply, needs your judgment on the price line.",
-        "② Invoice approval expires 5pm — one tap.",
-        "③ Your accountant's question about Q2 — only you know this one.",
-        "HANDLED (34): 12 replies drafted & waiting · 9 filed to folders · 13 junk unsubscribed at the source",
-      ]},
-      { h: `Sample drafted reply (${(v.style || "your").toLowerCase()} — trained on your sent mail)`, lines: [
-        v.style === "Warm & chatty"
-          ? `"Hey! Great timing — yes to Thursday, and I'll bring the numbers we talked about. One thing to flag before then: (your point, made nicely). See you at 2!"`
-          : `"Thursday works. I'll bring the Q2 numbers. One flag before then: (your point, one sentence). — ${v.name || "J"}"`,
-        "Drafts never send without your tap. Ever.",
-      ]},
-      { h: "The structural fix", lines: [
-        v.flavor === "Newsletter avalanche" ? "• Your 61 newsletter subscriptions: 8 you actually open. The other 53 get unsubscribed at the source this week — inbox shrinks structurally, not cosmetically."
-        : v.flavor === "Client-heavy" ? "• Client threads get priority classification + same-day drafts; everything else waits its turn quietly."
-        : v.flavor === "Internal chaos" ? "• Internal noise gets digest-batched twice daily; only decisions and deadlines surface individually."
-        : "• Week 1 maps your inbox's actual anatomy; weeks 2–4 dismantle it category by category.",
-        "• Every unsubscribe, filter and filing rule is logged and reversible",
-      ]},
-    ],
-  },
-
-  "Paperwork Agent": {
-    fields: [
-      { key: "type", label: "What kind of fight is this?", type: "select", options: ["Cancel a subscription", "Dispute a charge", "File an insurance claim", "Government form / appeal"] },
-      { key: "co", label: "Company / agency", type: "text", placeholder: "IronWorks Gym" },
-      { key: "sit", label: "The situation, briefly", type: "textarea", placeholder: "They charged me twice in June and support keeps closing my tickets…" },
+      { key: "name", label: "Name to scrub", type: "text", placeholder: "Jaden Green" },
+      { key: "city", label: "City / state (helps find listings)", type: "text", placeholder: "Phoenix, AZ" },
+      { key: "goal", label: "What's driving this?", type: "select", options: ["General privacy", "Reduce spam & robocalls", "A specific person I want to lose me", "Professional / safety reasons"] },
     ],
     generate: (v) => {
-      const isDispute = v.type === "Dispute a charge";
-      const isCancel = v.type === "Cancel a subscription";
-      const isClaim = v.type === "File an insurance claim";
+      const n = v.name || "your name";
       return [
-        { h: "The channel that actually works", lines: [
-          isCancel ? `• ${v.co || "This company"}-type cancellations die in the app on purpose. The channel that works: written notice citing the auto-renewal clause, sent where they're legally required to log it. That's where we file.`
-          : isDispute ? `• Support tickets are designed to exhaust you. We skip them: a formal billing dispute citing the card network's rules goes to their billing compliance address — the inbox that can't ignore you — with your card issuer CC'd on day 7 if silent.`
-          : isClaim ? `• Claims fail on missing magic words, not missing facts. We file on the correct form, citing your policy's actual coverage language, with the evidence packet they can't 'lose.'`
-          : `• The form references three other forms on purpose. We resolve the chain, complete the right one, and file through the channel with a mandated response clock.`,
+        { h: `Exposure sweep for ${n} (sample)`, lines: [
+          `🔴 12 data-broker profiles found — home address, ${v.city ? v.city + ", " : ""}age, and 3 listed relatives on the top people-search sites`,
+          `🔴 2 old breaches include your email + a reused password — flagged for a reset, not just removal`,
+          `🟡 41 marketing lists holding your address; 8 you opened this year, 33 you never did`,
+          `🟢 6 dormant accounts tied to a breached email — closable on your say-so`,
         ]},
-        { h: "Drafted filing (ready for your approval)", lines: [
-          `Re: ${v.type} — ${v.co || "[Company]"}`,
-          `"I am writing regarding ${excerpt(v.sit || "the matter described", 14)} ${isDispute ? "Under the card network's dispute rules and applicable consumer-billing law, I am formally disputing this charge and requesting written resolution within 30 days." : isCancel ? "Per the terms of the agreement and applicable auto-renewal law, this letter constitutes formal notice of cancellation, effective immediately. Please confirm in writing within 10 business days." : isClaim ? "Per the coverage terms of my policy, I am filing this claim with supporting documentation enclosed, and request a written determination within the period specified by my policy." : "I request review of this matter per the applicable procedure, and a written response within the mandated period."}"`,
-          "Timestamped, copied, and retained — a paper trail built like we might need it.",
+        { h: "Removal plan (files on your approval)", lines: [
+          `• Deletion / opt-out requests submitted to all 12 brokers, each citing the specific request it's legally required to honor`,
+          v.goal === "A specific person I want to lose me" ? "• The address-revealing sites first — the ones that make you findable — before the low-risk marketing lists"
+          : v.goal === "Reduce spam & robocalls" ? "• Marketing lists and number-selling brokers first — the pipeline feeding the robocalls gets cut at the source"
+          : v.goal === "Professional / safety reasons" ? "• People-search and address sites escalated, plus a suppression request wherever the law allows one"
+          : "• Full sweep across brokers, people-search sites and stale accounts, worst-exposure first",
+          "• 33 unread lists unsubscribed at the source; 6 zombie accounts closed",
         ]},
-        { h: "What happens next (without you)", lines: ["• Filed on your approval; their response clock starts", "• Silence past their stated window → automatic escalation (supervisor, regulator, or card issuer as appropriate)", "• The task closes when the matter closes — not when the letter sends"] },
+        { h: "Why this is a subscription, not a one-off", lines: [
+          "• Brokers re-list you within weeks — a one-time scrub quietly undoes itself",
+          "• Monthly re-scans catch new listings and re-file automatically",
+          "• Results-priced after the sweep: you spend credits only when a new listing is actually found and removed",
+        ]},
       ];
     },
   },
 
-  "Career Engine": {
+  "Hard Conversation Ghostwriter": {
     fields: [
-      { key: "posting", label: "Paste the job posting (or its key lines)", type: "textarea", placeholder: "Seeking a Senior Operations Manager to lead cross-functional teams, own vendor relationships, drive process improvement…" },
-      { key: "role", label: "Your current title", type: "text", placeholder: "Operations Lead" },
-      { key: "win", label: "Your best real win (one line)", type: "text", placeholder: "Cut fulfillment costs 23% while doubling order volume" },
+      { key: "situation", label: "What's the conversation?", type: "select", options: ["Firing / parting ways with a client", "Chasing money a friend owes", "A complaint (landlord, company, service)", "Asking for a raise", "Ending a vendor / partnership", "Setting a hard boundary"] },
+      { key: "detail", label: "The situation, in your words", type: "textarea", placeholder: "They've been late three months running and I've covered for them, but I can't keep doing it…" },
+      { key: "tone", label: "How should it land?", type: "select", options: ["Firm but kind", "Warm, door left open", "Final — no ambiguity"] },
     ],
     generate: (v) => {
-      const words = Array.from(new Set((v.posting || "").toLowerCase().match(/[a-z][a-z-]{5,}/g) || []))
-        .filter((w) => !["seeking", "looking", "candidate", "ability", "years", "experience", "including", "strong", "skills"].includes(w))
-        .slice(0, 8);
+      const sit = v.situation || "";
+      const warm = v.tone === "Warm, door left open";
+      const final = v.tone === "Final — no ambiguity";
+      const opener =
+        sit.startsWith("Firing") ? `Hi [name] — I've valued working together, and I want to be straight with you rather than let this drift.`
+        : sit.startsWith("Chasing") ? `Hey [name] — I hate that money is the thing between us right now, so I'd rather just say it plainly.`
+        : sit.startsWith("A complaint") ? `Hi — I'm writing about an issue that's gone on long enough that a friendly nudge isn't enough anymore.`
+        : sit.startsWith("Asking") ? `Hi [name] — I'd like to talk about my compensation, and I want to make the case directly.`
+        : sit.startsWith("Ending") ? `Hi [name] — after a lot of thought, I've decided to end our arrangement, and I want to do it cleanly and fairly.`
+        : `Hi [name] — I need to be clear about something, because being vague hasn't been fair to either of us.`;
+      const hardLine =
+        sit.startsWith("Firing") ? `After this project wraps, I'm going to move on from our work together. It isn't about any one thing — it's the right call for where I'm headed.`
+        : sit.startsWith("Chasing") ? `The $[amount] from [when] is still outstanding, and I need it settled by [date]. I'd rather sort this now than let it sit between us any longer.`
+        : sit.startsWith("A complaint") ? `The [issue] has not been resolved despite [attempts], and I'm now asking for [specific remedy] by [date].`
+        : sit.startsWith("Asking") ? `Based on [what I've delivered], I'm asking for a raise to [number]. I've laid out the reasoning below and I'm confident it's earned.`
+        : sit.startsWith("Ending") ? `We'll wind down over [notice period], I'll [handoff commitment], and I want to leave this on good terms.`
+        : `Going forward, [the boundary]. I'm telling you directly so there's no confusion later.`;
+      const close =
+        final ? `I've made my decision, so I'm not looking to reopen it — but I'm glad to sort out the practical details whenever works.`
+        : warm ? `I really do value what we've built, and I hope we can [stay in touch / work together again down the line]. Happy to talk it through.`
+        : `I'd rather handle this like adults than let it fester, so let me know a good time to talk if you'd prefer.`;
       return [
-        { h: "What the screener's software wants", lines: [
-          words.length ? `• Extracted from this posting: ${words.join(" · ")}` : "• Paste the posting text and the real keywords appear here",
-          "• These exact terms get woven into your bullets — truthfully. It's your history, weaponized, never invented.",
+        { h: "Drafted message (ready to send or edit)", lines: [
+          opener,
+          hardLine,
+          close,
+          `— [you]`,
         ]},
-        { h: "Rebuilt resume bullets (sample)", lines: [
-          `• ${v.win || "Your best win"} — leading with the number, because screeners and humans both stop at numbers`,
-          `• Reframed from your ${v.role || "current role"}: same facts, reordered so this job's priorities appear in your first three lines, not buried on page two`,
-          `• Formatting ATS-tested: no tables, no text boxes, nothing the parser silently eats`,
+        { h: "Why it's built this way", lines: [
+          `• The one hard sentence is stated once, cleanly — not buried, not repeated, not hedged into mush`,
+          `• Tone dialed to "${v.tone || "Firm but kind"}": ${final ? "no openings that invite negotiation" : warm ? "the door is explicitly left open" : "firm on the ask, kind on the person"}`,
+          v.detail ? `• Grounded in your specifics ("${excerpt(v.detail, 10)}") so it reads like you, not a template` : `• Add the details above and the draft grounds itself in your specifics`,
         ]},
-        { h: "Cover letter opener (no 'I am writing to express…')", lines: [`"${v.win || "The win you're proudest of"} — I mention it first because it's the exact problem this role exists to solve. Here's how I'd do it again for you."`] },
-        { h: "They will ask you", lines: ["① Walk me through the win — prepped with your real numbers and a 90-second arc", "② The gap/stretch question your resume invites — with an honest, forward-facing answer drafted", "③ 'Why us?' — answered with something true about their actual work, researched, not flattery"] },
-      ];
-    },
-  },
-
-  "Life Logistics": {
-    fields: [
-      { key: "dest", label: "Where to?", type: "text", placeholder: "Tokyo" },
-      { key: "days", label: "How long?", type: "select", options: ["Weekend", "4–6 days", "1–2 weeks"] },
-      { key: "party", label: "Who's going?", type: "text", placeholder: "Me, my partner, our 4-year-old" },
-      { key: "vibe", label: "Trip vibe", type: "select", options: ["Slow & deep", "See everything", "Food-first", "Rest, actually"] },
-    ],
-    generate: (v) => {
-      const d = v.dest || "your destination";
-      return [
-        { h: `${d} — itinerary skeleton (booking-ready in a real run)`, lines: [
-          `DAY 1 · Land soft: nothing scheduled before 4pm (${v.party?.toLowerCase().includes("4") || v.party?.toLowerCase().includes("kid") ? "travel day with a kid — protect the nap, win the trip" : "jet lag is a tax; don't pay it twice"}). Evening: one great, easy dinner near the hotel, booked.`,
-          v.vibe === "Food-first" ? `DAY 2 · The market morning + the lunch counter locals queue for (reservation impossible — we know the walk-in window) + reserved dinner that anchors the whole trip.`
-          : v.vibe === "Rest, actually" ? `DAY 2 · One thing before noon. Then nothing, on purpose, near water or a garden. The itinerary defends your rest against your own FOMO.`
-          : v.vibe === "See everything" ? `DAY 2 · The big sights, sequenced by geography + queue data so you're never crossing town twice or standing in the 90-minute line at 11am.`
-          : `DAY 2 · One neighborhood, all day. The itinerary picks the one that rewards depth in ${d} and maps it café-to-café.`,
-          `DAY 3+ · Built the same way: your pace (${(v.vibe || "").toLowerCase()}), your party (${v.party || "you"}), real availability, real prices.`,
+        { h: "The follow-up, already written", lines: [
+          `• When they push back, guilt-trip, or counter — a reply is drafted in advance in the same register`,
+          `• You're never caught flat in the moment that actually counts`,
+          `• Nothing sends without you. The words are yours to use, soften, or sharpen.`,
         ]},
-        { h: "Plan B, pre-built", lines: [`• The leg most likely to fail in ${d} (weather / strike / sold-out) already has its alternate researched — swap is one tap, not one panicked evening`] },
-        { h: "After you book, the watching starts", lines: ["• Flight & hotel prices monitored: drops trigger refund/rebook claims automatically", "• Confirmations, timings and addresses live in one itinerary doc that updates itself", "• Found money and zero admin — the whole point"] },
       ];
     },
   },
@@ -649,7 +398,7 @@ const TIERS = [
     price: 29,
     credits: 10,
     turnaround: "48h turnaround",
-    features: ["10 task credits / month", "6 everyday services (Life lane + Invoice Chaser + Brand Kit Lab)", "2 Autopilots", "Credits roll over 1 month"],
+    features: ["10 task credits / month", "2 starter services — Hard Conversation Ghostwriter + Refund & Comp Recovery", "1 Autopilot", "Credits roll over 1 month"],
     cta: "Go choreless",
     featured: false,
   },
@@ -658,7 +407,7 @@ const TIERS = [
     price: 79,
     credits: 30,
     turnaround: "24h turnaround",
-    features: ["30 task credits / month", "11 services — adds the full Creator lane + Reputation & Social Autopilots", "5 Autopilots", "1 free revision per task", "Voice & brand profile training", "Priority queue"],
+    features: ["30 task credits / month", "5 services — adds Clip Factory, Social Autopilot & Digital Footprint Cleaner", "3 Autopilots", "1 free revision per task", "Voice & brand profile training", "Priority queue"],
     cta: "Go Pro",
     featured: true,
   },
@@ -667,16 +416,16 @@ const TIERS = [
     price: 199,
     credits: 100,
     turnaround: "12h turnaround",
-    features: ["100 task credits / month", "All 12 services — adds Competitor Radar market intelligence", "Unlimited Autopilots", "Human QA on request", "Dedicated success manager", "Team seats (up to 5)"],
+    features: ["100 task credits / month", "All 6 services — adds Reputation Autopilot", "Unlimited Autopilots", "Human QA on request", "Dedicated success manager", "Team seats (up to 5)"],
     cta: "Scale up",
     featured: false,
   },
 ];
 
 const OUTCOMES = [
-  { stat: "$3,140", label: "recovered in 48h", quote: "Four overdue invoices chased with exactly the right tone per client. Two paid in two days.", who: "Meadow Co. — landscaping, Austin" },
+  { stat: "312", label: "data-broker listings removed", quote: "I searched my own name and there was so much — address, relatives, all of it. Now there's almost nothing, and it keeps them from re-adding me.", who: "Marcus T. — Pro member" },
   { stat: "+212%", label: "short-form views in 60 days", quote: "I upload one podcast. Ten scored clips come back. I haven't opened an editor since March.", who: "Dana R. — 340k subscribers" },
-  { stat: "11 hrs", label: "saved per week", quote: "My inbox went from 300 unread to a 3-item morning digest. It drafts replies better than I do.", who: "M. Osei — consultant" },
+  { stat: "1 email", label: "I'd dreaded for a month", quote: "It wrote the 'we're done' message to a client with exactly the right spine. I sent it in one tap and finally slept.", who: "Dana L. — freelance designer" },
   { stat: "$486", label: "in refunds it claimed for me", quote: "It found the price drops, filed the claims, and tracked them. I did literally nothing.", who: "Priya S. — Pro member" },
   { stat: "4.9★", label: "average rating maintained", quote: "Every review answered within a week, in our voice. Our reputation runs itself now.", who: "Bluebird Café — Portland" },
   { stat: "3.2x", label: "ROAS on first managed campaign", quote: "Choreless Ads built 14 creative variants, killed the losers weekly, and tripled our return.", who: "Kettle & Co. — DTC brand" },
@@ -685,9 +434,9 @@ const OUTCOMES = [
 const DEMO_TASKS = [
   { name: "October social calendar", service: "Social Autopilot", status: "Awaiting approval", eta: "Ready now", pct: 95 },
   { name: "Cut podcast #42 into shorts", service: "Clip Factory", status: "In QA", eta: "~2h", pct: 80 },
-  { name: "Dispute duplicate gym charge", service: "Paperwork Agent", status: "Running", eta: "~6h", pct: 45 },
-  { name: "Reply drafts — Tuesday inbox", service: "Inbox Concierge", status: "Delivered", eta: "Done 7:04am", pct: 100 },
-  { name: "Chase invoice #1082 (Meadow Co.)", service: "Invoice Chaser", status: "Delivered", eta: "Paid ✓", pct: 100 },
+  { name: "Remove me from 14 data-broker sites", service: "Digital Footprint Cleaner", status: "Running", eta: "~1 day", pct: 45 },
+  { name: "Claim price-drop refund — Denver flight", service: "Refund & Comp Recovery", status: "Delivered", eta: "$60 back ✓", pct: 100 },
+  { name: "Draft the raise-request email", service: "Hard Conversation Ghostwriter", status: "Delivered", eta: "Sent ✓", pct: 100 },
 ];
 
 const STATUS_STYLE: Record<string, string> = {
@@ -728,10 +477,10 @@ function TaskDrop() {
   const [result, setResult] = useState<ReturnType<typeof routeTask> | null>(null);
 
   const examples = [
-    "Chase my 3 overdue invoices",
     "Turn my podcast into shorts",
-    "Cancel my gym membership and dispute last charge",
-    "Run ads for my candle shop",
+    "Write the email I've been dreading to a client",
+    "Get my money back on that price drop",
+    "Remove me from data-broker sites",
   ];
 
   return (
@@ -743,7 +492,7 @@ function TaskDrop() {
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder='Describe any task, e.g. "chase my overdue invoices" or "run ads for my shop"…'
+          placeholder={'Describe any task, e.g. "write the email you\'re dreading" or "run ads for my shop"…'}
           rows={2}
           className="w-full resize-none border-2 border-[#141414] bg-[#FAF7F2] p-3 text-sm outline-none placeholder:text-[#141414]/40"
         />
@@ -997,7 +746,7 @@ function Onboarding({ close, finish }: { close: () => void; finish: () => void }
             <>
               <p className="text-sm text-[#141414]/75">Your first task is on us — while we learn you, you get finished work. Pick one:</p>
               <div className="mt-4 space-y-2">
-                {["Triage my inbox and draft today's replies", "Answer my 5 most recent unanswered reviews", "Turn my last video into 5 shorts"].map((t) => (
+                {["Write the email I've been dreading to send", "Answer my 5 most recent unanswered reviews", "Turn my last video into 5 shorts"].map((t) => (
                   <button key={t} onClick={finish} className="block w-full border-2 border-[#141414] bg-white px-4 py-3 text-left text-sm font-medium hover:bg-[#E8E1D4]">
                     → {t}
                   </button>
@@ -1039,8 +788,8 @@ function Home({ goServices, goAds, start }: { goServices: () => void; goAds: () 
               <span className="text-[#FF4D00]">Start receiving.</span>
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-[#141414]/80">
-              Chatbots give you text. Choreless gives you <strong>finished work</strong> — posts published, invoices
-              chased, videos clipped, paperwork filed, ad campaigns run. Drop a task, and AI agent pipelines with real
+              Chatbots give you text. Choreless gives you <strong>finished work</strong> — shorts cut, reviews answered,
+              money recovered, the hard email written, your data scrubbed. Drop a task, and AI agent pipelines with real
               tool access do it end-to-end. You just approve.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -1064,7 +813,7 @@ function Home({ goServices, goAds, start }: { goServices: () => void; goAds: () 
             {[
               ["It remembers you", "Your brand kit, voice profile and business data persist across every task. Nothing to re-explain, ever."],
               ["It acts in your tools", "Agents post, send, schedule and file through your connected accounts — with your one-tap approval on anything live."],
-              ["It runs unprompted", "Autopilots work on schedules and triggers. Reviews answered weekly, inbox triaged daily — while you sleep."],
+              ["It runs unprompted", "Autopilots work on schedules and triggers. Reviews answered weekly, refunds recovered, your data re-scrubbed — while you sleep."],
               ["It ships QA'd work", "Every deliverable passes an automated quality gate; anything uncertain is checked by a human before you see it."],
             ].map(([title, body], i) => (
               <div key={title} className="bg-[#141414] p-6">
@@ -1559,7 +1308,7 @@ function Pricing({ start }: { start: () => void }) {
     <main className="mx-auto max-w-6xl px-5 py-14">
       <h1 style={serif} className="text-4xl md:text-5xl">Simple plans. Real work.</h1>
       <p className="mt-3 max-w-2xl text-[#141414]/75">
-        Credits are the unit of finished work — a chased invoice, a clipped video, a filed dispute. Unused credits roll
+        Credits are the unit of finished work — a clipped video, a recovered refund, a hard email written. Unused credits roll
         over one month. Every task includes the quality gate.
       </p>
 
@@ -1644,10 +1393,10 @@ function Pricing({ start }: { start: () => void }) {
 
 function Dashboard({ sub }: { sub: Sub }) {
   const [autopilots, setAutopilots] = useState<Record<string, boolean>>({
-    "Inbox Concierge": true,
+    "Refund & Comp Recovery": true,
     "Reputation Autopilot": true,
     "Social Autopilot": false,
-    "Competitor Radar": false,
+    "Digital Footprint Cleaner": false,
   });
   const [running, setRunning] = useState<(typeof SERVICES)[number] | null>(null);
 
@@ -1680,7 +1429,7 @@ function Dashboard({ sub }: { sub: Sub }) {
       <div className="mt-8 grid gap-4 sm:grid-cols-3">
         {[
           ["Credits left", `${sub.credits} / ${PLAN_CREDITS[sub.plan]}`, `${sub.plan} plan · resets monthly`],
-          ["Services unlocked", `${SERVICES.filter((s) => unlocked(s.name, sub.plan)).length} / 12`, sub.plan === "Business" ? "Everything, including Competitor Radar" : sub.plan === "Pro" ? "Add Competitor Radar with Business" : "Add Creator lane + Autopilots with Pro"],
+          ["Services unlocked", `${SERVICES.filter((s) => unlocked(s.name, sub.plan)).length} / 6`, sub.plan === "Business" ? "Everything, including Reputation Autopilot" : sub.plan === "Pro" ? "Add Reputation Autopilot with Business" : "Add Clip Factory + more with Pro"],
           ["Hours saved (est.)", "26.5", "vs. doing it yourself"],
         ].map(([label, big, note]) => (
           <div key={label} className="border-2 border-[#141414] bg-white p-5">

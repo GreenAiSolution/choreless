@@ -1,31 +1,28 @@
 # CHORELESS — Platform Blueprint
 
-**One-liner:** The subscription that does the work, not the talking. Customers drop tasks (or switch on Autopilots); AI agent pipelines with real tool access deliver finished, QA'd work — posts published, invoices chased, videos clipped, paperwork filed.
+**One-liner:** The subscription that does the work, not the talking. Customers drop tasks (or switch on Autopilots); AI agent pipelines with real tool access deliver finished, QA'd work — shorts cut, reviews answered, money recovered, the hard email written, your data scrubbed.
 
 **The moat vs. any chatbot:** persistent memory of the customer (brand kit, voice, data) · execution inside their real tools · unprompted scheduled/triggered runs · a quality gate so drafts never reach the customer · one-tap approval on anything irreversible.
 
 ---
 
-## Service Catalog (launch: 12 services, 3 lanes)
+## Service Catalog (launch: 6 focused services, 3 lanes)
+
+Deliberately narrowed from a broad 12 to **6 rare-but-needed services** — each one either sells itself visually (Clip Factory), recovers real money (Refund & Comp Recovery), or removes an acute pain almost nobody else productizes (Digital Footprint Cleaner, Hard Conversation Ghostwriter). "Does one thing undeniably" beats "does everything" for an unknown brand.
 
 | # | Service | Lane | You get | Credits | Why now |
 |---|---|---|---|---|---|
-| 1 | Reputation Autopilot ⚡ | Business | Reviews monitored + responses posted weekly, monthly report | 3/run | Reviews decide local business survival |
-| 2 | Invoice Chaser ⚡ | Business | Tone-matched overdue chasing, escalation, cash report | 2/run | Late payments = #1 SMB cash killer |
+| 1 | Clip Factory | Creator | Long video → captioned shorts + thumbnails, retention-scored | 5 | **Lead GTM wedge** — output is the ad; short-form growth, editing burnout |
+| 2 | Reputation Autopilot ⚡ | Business | Reviews monitored + responses posted weekly, monthly report | 3/run | Reviews decide local business survival |
 | 3 | Social Autopilot ⚡ | Business | 30-day designed calendar, scheduled after approval | 8 | Consistency without a marketer |
-| 4 | Competitor Radar ⚡ | Business | Weekly competitor brief + one counter-move | 2/run | Markets shift weekly now |
-| 5 | Clip Factory | Creator | Long video → captioned shorts + thumbnails, retention-scored | 5 | Short-form growth, editing burnout |
-| 6 | Repurpose Engine | Creator | One piece → newsletter, thread, LinkedIn, blog in your voice | 3 | Multi-platform is table stakes |
-| 7 | Brand Kit Lab | Creator | Thumbnails/banners/templates matched to locked identity | 2 | CTR lives on the thumbnail |
-| 8 | Sponsor Kit ⚡ | Creator | Self-updating media kit + sponsor matches + outreach drafts | 4/run | Brand deals, un-systematized |
-| 9 | Inbox Concierge ⚡ | Life | Daily triage, drafted replies, unsubscribes, 3-things digest | 3/run | 2.5 hrs/day lost to email |
-| 10 | Paperwork Agent | Life | Cancellations, disputes, claims, forms — filed and tracked | 2 | Companies weaponize friction |
-| 11 | Career Engine | Life | Tailored resume + cover letter + interview brief per posting | 2 | AI screening kills generic resumes |
-| 12 | Life Logistics | Life | Travel itineraries, appointments, gifts, price-drop refunds | 3 | Admin is the tax on modern life |
+| 4 | Refund & Comp Recovery ⚡ | Life | Price-drop, delay, outage & wrong-charge claims filed for you | 2/run † | It pays for itself; every company banks on you never claiming |
+| 5 | Digital Footprint Cleaner ⚡ | Life | Data-broker removal, deletion requests, zombie accounts, monthly re-scan | 6 → 2/mo † | Privacy dread peaking; recurring by nature (brokers re-list you) |
+| 6 | Hard Conversation Ghostwriter | Life | The dreaded message (fire a client, chase money, ask a raise) written right, with follow-up | 2 | Nobody offers it; the pain costs people sleep |
 
 ⚡ = Autopilot-capable (runs on schedule/trigger without being asked)
+† = **Results-priced** — credits are spent only when the service actually recovers money / removes a new listing.
 
-**Task Drop:** anything not in the catalog gets routed to the closest pipeline; unroutable requests are mined weekly as candidates for service #13+.
+**Task Drop:** anything not in the catalog gets routed to the closest pipeline; unroutable requests are mined weekly as candidates for the next service.
 
 ## Premium Studio: Choreless Ads
 
