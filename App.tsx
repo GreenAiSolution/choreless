@@ -1080,30 +1080,137 @@ function ServiceDossier({
 
 /* ============ SERVICE RUNNER (the functioner) ============ */
 
+/* ============ EXECUTION ENGINE — the "AI decides, we act" services ============
+   Refund & Comp Recovery and Digital Footprint Cleaner don't just generate text —
+   they act on the customer's behalf on third-party sites. That needs three things
+   the write-only services don't: explicit LEGAL AUTHORIZATION (you cannot file a
+   claim or a deletion request as someone without their consent), an AGENTIC
+   pipeline that logs into external sites via a headless browser, and HUMAN-OPS
+   checkpoints for the steps a bot must not do alone (ID verification, anything
+   that moves money, holdout sites). This models that flow end-to-end and gates it
+   behind payment + signed authorization. In production the pipeline runs
+   server-side on a headless-browser fleet feeding a human-ops queue; the demo
+   compresses the SLA into seconds. */
+
+type Actor = "agent" | "ops" | "legal" | "system";
+type PipeStep = { label: string; actor: Actor; detail: string };
+type LedgerRow = { item: string; status: string; tone: "win" | "pending" | "watch"; note: string };
+type Execution = {
+  chargeModel: string;
+  chargeCta: string;
+  consent: { id: string; label: string }[];
+  pipeline: PipeStep[];
+  ledger: (v: Record<string, string>) => { headline: string; sub: string; recovered?: string; rows: LedgerRow[] };
+};
+
+const ACTOR_META: Record<Actor, { icon: string; label: string; text: string; bg: string }> = {
+  agent:  { icon: "🤖", label: "AI agent",   text: "text-[#FF4D00]", bg: "bg-[#FF4D00]" },
+  ops:    { icon: "🧑‍💼", label: "Human ops",  text: "text-[#0A5C36]", bg: "bg-[#0A5C36]" },
+  legal:  { icon: "⚖️", label: "Legal gate",  text: "text-[#141414]", bg: "bg-[#141414]" },
+  system: { icon: "⚙️", label: "System",      text: "text-[#141414]/55", bg: "bg-[#141414]/55" },
+};
+
+const EXECUTION: Record<string, Execution> = {
+  "Refund & Comp Recovery": {
+    chargeModel: "Success-based — authorizing costs nothing today. You're only charged (a share of what we win back) when money actually lands.",
+    chargeCta: "Authorize & start recovering",
+    consent: [
+      { id: "act", label: "I authorize Choreless to contact merchants, airlines and providers on my behalf to request the refunds, price adjustments and credits I'm owed." },
+      { id: "dispute", label: "I understand Choreless never opens a bank chargeback or formal dispute without my explicit, per-claim approval." },
+      { id: "data", label: "I grant read-only access to the receipts and order data I connect, used solely to detect recoverable money." },
+    ],
+    pipeline: [
+      { actor: "system", label: "Index your receipts", detail: "Purchases, flights, deliveries and outages pulled into a live watch-list." },
+      { actor: "agent",  label: "Scan for recoverable money", detail: "Prices re-checked, delivery SLAs and uptime cross-referenced against what you actually paid." },
+      { actor: "agent",  label: "Match to merchant policy", detail: "Each hit mapped to that merchant's real refund / price-adjustment / comp policy and its filing window." },
+      { actor: "legal",  label: "Authorization check", detail: "Confirms your signed authorization covers this merchant and claim type before anything is filed." },
+      { actor: "agent",  label: "File the claim in your name", detail: "Logs into the merchant flow on a headless browser and submits the claim with the correct policy citation." },
+      { actor: "ops",    label: "Human-ops review", detail: "A specialist checks every claim over $50, and anything touching a dispute, before it sends." },
+      { actor: "agent",  label: "Track to resolution", detail: "Claim status followed until the credit lands — automatically re-filed once if wrongly denied." },
+    ],
+    ledger: (v) => {
+      const item = (v.item || "").trim() || "your recent purchase";
+      const what = v.what || "";
+      const first: LedgerRow =
+        what.includes("price")  ? { item: `Price drop after purchase — ${item}`, status: "Recovered ✓", tone: "win", note: "Difference credited to your original card in ~4 days" } :
+        what.includes("flight") ? { item: `Late flight / delivery — ${item}`, status: "Filed · pending", tone: "pending", note: "SLA-breach compensation claim submitted; provider reviewing" } :
+        what.includes("outage") ? { item: `Service outage — ${item}`, status: "Filed · pending", tone: "pending", note: "Bill-credit request filed under the provider's SLA" } :
+                                   { item: `Wrong / double charge — ${item}`, status: "Human-ops review", tone: "watch", note: "Possible dispute — held for your one-tap approval before filing" };
+      return {
+        headline: "Recovery pipeline is live",
+        sub: "You're only charged when money actually lands back with you.",
+        recovered: "$187 recovered on average, per member, in the first month",
+        rows: [
+          first,
+          { item: "Denver flight — $60 price drop", status: "Recovered ✓", tone: "win", note: "Auto-filed and credited last week" },
+          { item: "Package 4 days late — shipping refund", status: "Filed · pending", tone: "pending", note: "Carrier SLA breach; confirmation expected in 3–5 days" },
+          { item: "6-hr internet outage — bill credit", status: "Filed · pending", tone: "pending", note: "$22 credit requested from your provider" },
+        ],
+      };
+    },
+  },
+  "Digital Footprint Cleaner": {
+    chargeModel: "Flat sweep fee + monthly monitoring, charged when the sweep starts. Cancel anytime and the monitoring stops.",
+    chargeCta: "Authorize agent & start the sweep",
+    consent: [
+      { id: "agent", label: "I appoint Choreless as my authorized agent to submit data-deletion and opt-out requests on my behalf (CCPA §1798.135 / GDPR Art. 17)." },
+      { id: "process", label: "I consent to Choreless processing the identity details I provide solely to locate and remove my records." },
+      { id: "id", label: "I understand some brokers require identity verification I complete myself; Choreless never uploads government ID without my per-request approval." },
+    ],
+    pipeline: [
+      { actor: "system", label: "Build your identity fingerprint", detail: "Names, aliases, emails, phones and past addresses assembled into a match key." },
+      { actor: "agent",  label: "Sweep the broker network", detail: "150+ data-broker and people-search sites crawled for records that match you." },
+      { actor: "legal",  label: "Attach authorized-agent proof", detail: "Your signed authorization is bundled with each request so brokers are legally obliged to honor it." },
+      { actor: "agent",  label: "File opt-outs & deletions", detail: "Removal forms submitted and the confirmation-email loops handled automatically." },
+      { actor: "ops",    label: "Human-ops works the holdouts", detail: "Sites demanding a phone call, notarization or postcard are completed by a specialist." },
+      { actor: "agent",  label: "Close accounts & unsubscribe", detail: "Dormant logins closed; mailing lists mass-unsubscribed at the source." },
+      { actor: "system", label: "Monthly re-scan", detail: "Re-listed records caught and re-filed so you stay off the grid." },
+    ],
+    ledger: (v) => {
+      const n = (v.name || "").trim() || "you";
+      return {
+        headline: `Erasing ${n} from the data brokers`,
+        sub: "72-hour first sweep, then re-scanned and re-filed every month.",
+        rows: [
+          { item: "Spokeo · BeenVerified · Whitepages", status: "Removed ✓", tone: "win", note: "3 profiles deleted and confirmed" },
+          { item: "14 more broker & people-search sites", status: "Opt-outs filed", tone: "pending", note: "Email-confirmation loops in progress (2–10 days)" },
+          { item: "Radaris — postcard verification required", status: "Human-ops handling", tone: "watch", note: "A specialist is completing the manual step for you" },
+          { item: "33 mailing lists · 6 zombie accounts", status: "Cleared ✓", tone: "win", note: "Unsubscribed at the source and closed" },
+        ],
+      };
+    },
+  },
+};
+
 function ServiceRunner({ s, close, sub }: { s: (typeof SERVICES)[number]; close: () => void; sub: Sub }) {
   const rt = RUNTIME[s.name];
   const d = DEEP[s.name];
-  const [phase, setPhase] = useState<"intake" | "running" | "done">("intake");
+  const ex = EXECUTION[s.name];
+  const [phase, setPhase] = useState<"intake" | "authorize" | "running" | "done">("intake");
   const [values, setValues] = useState<Record<string, string>>({});
+  const [consent, setConsent] = useState<Record<string, boolean>>({});
   const [stepIdx, setStepIdx] = useState(0);
   const spent = useRef(false);
 
   const runSteps: string[] = [...(d?.steps.map(([t]) => t) ?? []), "Quality gate"];
+  const runLen = ex ? ex.pipeline.length : runSteps.length;
   const canRun = rt.fields.every((f) => (values[f.key] || "").trim().length > 0);
   const enough = sub.credits >= s.credits;
+  const consentOk = ex ? ex.consent.every((c) => consent[c.id]) : true;
+  const led = ex && phase === "done" ? ex.ledger(values) : null;
 
   useEffect(() => {
     if (phase !== "running") return;
-    if (stepIdx >= runSteps.length) {
+    if (stepIdx >= runLen) {
       if (!spent.current) { spent.current = true; sub.spend(s.credits); }
       setPhase("done");
       return;
     }
-    const t = setTimeout(() => setStepIdx((i) => i + 1), 800);
+    const t = setTimeout(() => setStepIdx((i) => i + 1), ex ? 700 : 800);
     return () => clearTimeout(t);
   }, [phase, stepIdx]);
 
-  const blocks = phase === "done" ? rt.generate(values) : [];
+  const blocks = phase === "done" && !ex ? rt.generate(values) : [];
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#141414]/70 p-4 py-8" onClick={close}>
@@ -1111,7 +1218,10 @@ function ServiceRunner({ s, close, sub }: { s: (typeof SERVICES)[number]; close:
         <div className={`flex items-center justify-between border-b-2 border-[#141414] px-5 py-3 ${LANE_COLOR[s.lane]}`}>
           <div>
             <p className="text-xs font-bold uppercase tracking-widest opacity-80">
-              {phase === "intake" ? "New task" : phase === "running" ? "Pipeline running" : "Deliverable · QA passed"}
+              {phase === "intake" ? "New task"
+                : phase === "authorize" ? "Authorization & payment"
+                : phase === "running" ? (ex ? "Agents working" : "Pipeline running")
+                : ex ? "Live status" : "Deliverable · QA passed"}
             </p>
             <h2 style={serif} className="text-2xl">{s.name}</h2>
           </div>
@@ -1160,7 +1270,15 @@ function ServiceRunner({ s, close, sub }: { s: (typeof SERVICES)[number]; close:
               <span className="text-sm font-bold">
                 Cost: {s.credits} credit{s.credits > 1 ? "s" : ""} · you have <span className={enough ? "text-[#0A5C36]" : "text-[#FF4D00]"}>{sub.credits}</span>
               </span>
-              {enough ? (
+              {ex ? (
+                <button
+                  onClick={() => setPhase("authorize")}
+                  disabled={!canRun}
+                  className="bg-[#141414] px-5 py-2.5 text-sm font-bold text-[#FAF7F2] hover:opacity-90 disabled:opacity-40"
+                >
+                  {canRun ? "Review authorization →" : "Fill every field to continue"}
+                </button>
+              ) : enough ? (
                 <button
                   onClick={() => { setStepIdx(0); setPhase("running"); }}
                   disabled={!canRun}
@@ -1177,20 +1295,98 @@ function ServiceRunner({ s, close, sub }: { s: (typeof SERVICES)[number]; close:
           </div>
         )}
 
+        {/* AUTHORIZE — legal consent + payment (execution services only) */}
+        {phase === "authorize" && ex && (
+          <div className="p-5">
+            <p className="text-sm text-[#141414]/70">
+              This service acts for you on other companies' sites — so before anything runs, we need your explicit,
+              signed authorization. Nothing is filed until every box is checked.
+            </p>
+            <div className="mt-4 border-2 border-[#141414] bg-white">
+              <div className="flex items-center gap-2 border-b-2 border-[#141414] bg-[#141414] px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#FAF7F2]">
+                <span>⚖️</span> Authorization — we act on your behalf
+              </div>
+              <div className="space-y-3 px-4 py-4">
+                {ex.consent.map((c) => (
+                  <label key={c.id} className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed">
+                    <input
+                      type="checkbox"
+                      checked={!!consent[c.id]}
+                      onChange={(e) => setConsent((p) => ({ ...p, [c.id]: e.target.checked }))}
+                      className="mt-0.5 h-4 w-4 shrink-0 accent-[#0A5C36]"
+                    />
+                    <span className="text-[#141414]/85">{c.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <p className="mt-4 border-l-4 border-[#FF4D00] pl-3 text-xs italic text-[#141414]/70">{ex.chargeModel}</p>
+
+            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t-2 border-[#141414] pt-4">
+              <button onClick={() => setPhase("intake")} className="border-2 border-[#141414] px-4 py-2 text-sm font-bold hover:bg-[#E8E1D4]">
+                ← Back
+              </button>
+              {enough ? (
+                <button
+                  onClick={() => { setStepIdx(0); setPhase("running"); }}
+                  disabled={!consentOk}
+                  className="bg-[#0A5C36] px-5 py-2.5 text-sm font-bold text-white hover:opacity-90 disabled:opacity-40"
+                >
+                  {consentOk ? `🔒 ${ex.chargeCta}` : "Check every box to authorize"}
+                </button>
+              ) : (
+                <button onClick={() => sub.setPlan("Business")} className="bg-[#141414] px-5 py-2.5 text-sm font-bold text-[#FAF7F2]">
+                  Out of credits — upgrade (demo)
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* RUNNING */}
         {phase === "running" && (
           <div className="p-5">
-            <div className="border-2 border-[#141414] bg-[#141414] p-4 font-mono text-sm text-[#FAF7F2]">
-              {runSteps.map((t, i) => (
-                <p key={t} className={i > stepIdx ? "opacity-25" : ""}>
-                  {i < stepIdx ? <span className="text-[#7ee2a8]">✓</span> : i === stepIdx ? <span className="animate-pulse text-[#FF4D00]">▸</span> : "·"}{" "}
-                  {t}
-                  {i === stepIdx && <span className="animate-pulse">…</span>}
-                </p>
-              ))}
-            </div>
+            {ex ? (
+              <div className="space-y-2">
+                {ex.pipeline.map((st, i) => {
+                  const m = ACTOR_META[st.actor];
+                  const done = i < stepIdx, active = i === stepIdx;
+                  return (
+                    <div
+                      key={st.label}
+                      className={`flex gap-3 border-2 p-3 ${active ? "border-[#141414] bg-white shadow-[3px_3px_0_#141414]" : done ? "border-[#141414]/40 bg-white" : "border-[#141414]/15 bg-transparent opacity-45"}`}
+                    >
+                      <div className="pt-0.5 text-lg leading-none">
+                        {done ? <span className="text-[#0A5C36]">✓</span> : active ? <span className="animate-pulse">{m.icon}</span> : m.icon}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-sm font-bold">{st.label}</span>
+                          <span className={`shrink-0 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white ${m.bg}`}>{m.label}</span>
+                          {active && <span className="animate-pulse text-xs font-bold text-[#FF4D00]">working…</span>}
+                        </div>
+                        {(active || done) && <p className="mt-0.5 text-xs text-[#141414]/65">{st.detail}</p>}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="border-2 border-[#141414] bg-[#141414] p-4 font-mono text-sm text-[#FAF7F2]">
+                {runSteps.map((t, i) => (
+                  <p key={t} className={i > stepIdx ? "opacity-25" : ""}>
+                    {i < stepIdx ? <span className="text-[#7ee2a8]">✓</span> : i === stepIdx ? <span className="animate-pulse text-[#FF4D00]">▸</span> : "·"}{" "}
+                    {t}
+                    {i === stepIdx && <span className="animate-pulse">…</span>}
+                  </p>
+                ))}
+              </div>
+            )}
             <p className="mt-3 text-xs text-[#141414]/60">
-              In production this runs asynchronously — you'd close this window and the deliverable would arrive in your dashboard within the SLA. The demo compresses {s.turnaround.toLowerCase()} into seconds.
+              {ex
+                ? "In production these steps run server-side on a headless-browser fleet with a human-ops queue — you'd close this and watch status land in your dashboard. The demo compresses the real SLA into seconds."
+                : `In production this runs asynchronously — you'd close this window and the deliverable would arrive in your dashboard within the SLA. The demo compresses ${s.turnaround.toLowerCase()} into seconds.`}
             </p>
           </div>
         )}
@@ -1198,30 +1394,63 @@ function ServiceRunner({ s, close, sub }: { s: (typeof SERVICES)[number]; close:
         {/* DONE */}
         {phase === "done" && (
           <div className="p-5">
-            <div className="flex items-center justify-between">
-              <span className="bg-[#0A5C36] px-2 py-1 text-xs font-bold uppercase tracking-widest text-white">✓ QA gate passed</span>
-              <span className="text-xs font-bold text-[#141414]/60">{s.credits} credit{s.credits > 1 ? "s" : ""} debited · {sub.credits} left</span>
-            </div>
-            <div className="mt-4 space-y-4">
-              {blocks.map((b) => (
-                <div key={b.h} className="border-2 border-[#141414] bg-white">
-                  <div className="border-b border-dashed border-[#141414]/40 px-4 py-2 text-xs font-bold uppercase tracking-widest">{b.h}</div>
-                  <div className="space-y-2 px-4 py-3">
-                    {b.lines.map((l, i) => (
-                      <p key={i} className={`text-sm leading-relaxed ${l.startsWith("•") || /^[①②③🔴🟡🟢📉0-9]/.test(l) ? "text-[#141414]/85" : "text-[#141414]"}`}>{l}</p>
-                    ))}
-                  </div>
+            {ex && led ? (
+              <>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="bg-[#0A5C36] px-2 py-1 text-xs font-bold uppercase tracking-widest text-white">● Live · running for you</span>
+                  <span className="text-xs font-bold text-[#141414]/60">Authorized · {s.credits} credit{s.credits > 1 ? "s" : ""} reserved</span>
                 </div>
-              ))}
-            </div>
+                <h3 style={serif} className="mt-3 text-xl">{led.headline}</h3>
+                <p className="text-sm text-[#141414]/70">{led.sub}</p>
+                {led.recovered && (
+                  <p className="mt-2 inline-block border-2 border-[#141414] bg-[#FF4D00] px-3 py-1 text-sm font-bold text-white">{led.recovered}</p>
+                )}
+                <div className="mt-4 border-2 border-[#141414] bg-white">
+                  {led.rows.map((r, i) => {
+                    const tone = r.tone === "win" ? "bg-[#0A5C36] text-white" : r.tone === "pending" ? "bg-[#FF4D00] text-white" : "bg-[#141414] text-white";
+                    return (
+                      <div key={i} className={`flex flex-wrap items-center justify-between gap-2 px-4 py-3 ${i > 0 ? "border-t-2 border-[#141414]" : ""}`}>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-bold">{r.item}</p>
+                          <p className="text-xs text-[#141414]/60">{r.note}</p>
+                        </div>
+                        <span className={`shrink-0 px-2 py-1 text-[11px] font-bold uppercase tracking-wider ${tone}`}>{r.status}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+                <p className="mt-3 text-xs text-[#141414]/60">
+                  🧑‍💼 A human-ops specialist reviews every money-moving or ID-verification step before it completes — and you're pinged the moment anything needs your one-tap approval.
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center justify-between">
+                  <span className="bg-[#0A5C36] px-2 py-1 text-xs font-bold uppercase tracking-widest text-white">✓ QA gate passed</span>
+                  <span className="text-xs font-bold text-[#141414]/60">{s.credits} credit{s.credits > 1 ? "s" : ""} debited · {sub.credits} left</span>
+                </div>
+                <div className="mt-4 space-y-4">
+                  {blocks.map((b) => (
+                    <div key={b.h} className="border-2 border-[#141414] bg-white">
+                      <div className="border-b border-dashed border-[#141414]/40 px-4 py-2 text-xs font-bold uppercase tracking-widest">{b.h}</div>
+                      <div className="space-y-2 px-4 py-3">
+                        {b.lines.map((l, i) => (
+                          <p key={i} className={`text-sm leading-relaxed ${l.startsWith("•") || /^[①②③🔴🟡🟢📉0-9]/.test(l) ? "text-[#141414]/85" : "text-[#141414]"}`}>{l}</p>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
             <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t-2 border-[#141414] pt-4">
-              <p className="text-xs text-[#141414]/60">Miss the brief? The revision is free and the credit comes back.</p>
+              <p className="text-xs text-[#141414]/60">{ex ? "Only charged on results. Cancel the autopilot anytime from your dashboard." : "Miss the brief? The revision is free and the credit comes back."}</p>
               <div className="flex gap-2">
-                <button onClick={() => { setPhase("intake"); spent.current = false; }} className="border-2 border-[#141414] px-4 py-2 text-sm font-bold hover:bg-[#E8E1D4]">
-                  Run again
+                <button onClick={() => { setPhase("intake"); spent.current = false; setConsent({}); }} className="border-2 border-[#141414] px-4 py-2 text-sm font-bold hover:bg-[#E8E1D4]">
+                  {ex ? "New task" : "Run again"}
                 </button>
                 <button onClick={close} className="bg-[#0A5C36] px-5 py-2 text-sm font-bold text-white hover:opacity-90">
-                  ✓ Approve & deliver
+                  {ex ? "Done — track in dashboard" : "✓ Approve & deliver"}
                 </button>
               </div>
             </div>
