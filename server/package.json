@@ -1,0 +1,13 @@
+{
+  "name": "choreless-execution-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Runnable scaffold for the act-on-your-behalf services (Refund & Comp Recovery, Digital Footprint Cleaner). Dry-run against a local mock target by default. Zero external dependencies.",
+  "scripts": {
+    "demo": "node demo.js",
+    "framework": "node framework-demo.js",
+    "api": "node api.js",
+    "audit": "node -e \"import('./lib/audit.js').then(m=>console.log(JSON.stringify(m.verifyChain()),'\\n',m.readAudit().length,'entries'))\""
+  }
+}

@@ -12,6 +12,8 @@ A chore-outsourcing platform demo — "Work delivered, not chatted. Every task Q
 | `CHORELESS-architecture.md` | System architecture |
 | `CHORELESS-operations-playbook.md` | Operations playbook |
 | `CHORELESS-financial-model.xlsx` | Financial model |
+| `CHORELESS-framework.md` | **The Service Framework** — the runtime spine every service runs through |
+| `server/` | Runnable framework: `npm run framework` proves all six services end-to-end |
 
 ## Editing & building
 
@@ -30,7 +32,8 @@ is what GitHub Pages serves. The build is idempotent — run it as many times as
 
 - Live services: **6 focused pipelines** — Clip Factory (lead wedge), Reputation
   Autopilot, Social Autopilot, Refund & Comp Recovery, Digital Footprint Cleaner,
-  Hard Conversation Ghostwriter.
+  Hard Conversation Ghostwriter. All six are declarative packages in `server/services/`
+  that run through one spine — see `CHORELESS-framework.md` (`cd server && npm run framework`).
 - `iris-transition.html` holds the click-anchored iris page transition (a soft tonal
   reveal from the click point), extracted once from the original bundle and re-inlined
   by `build.mjs`. The embedded preview browser never fires WAAPI `onfinish`, so
