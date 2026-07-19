@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choreless — Ops Console</title>
+<style>
+  :root { --paper:#FAF7F2; --ink:#141414; --orange:#FF4D00; --line:#E5DFD5; }
+  * { box-sizing:border-box; margin:0; }
+  body { background:var(--ink); color:#EDEAE4; font:14px/1.5 ui-monospace,Menlo,monospace; padding:24px; }
+  h1 { font-size:18px; margin-bottom:16px; } h1 b { color:var(--orange); }
+  h2 { font-size:14px; margin:22px 0 8px; color:#B8B2A6; text-transform:uppercase; letter-spacing:1px; }
+  .metrics { display:flex; gap:12px; flex-wrap:wrap; }
+  .metric { background:#1E1D1B; border:1px solid #33312D; border-radius:10px; padding:12px 16px; }
+  .metric .v { font-size:22px; font-weight:700; color:var(--orange); }
+  .metric .k { font-size:11px; color:#8C877D; }
+  .card { background:#1E1D1B; border:1px solid #33312D; border-radius:10px; padding:14px; margin-bottom:10px; }
+  button { background:var(--orange); color:#fff; border:none; padding:6px 12px; border-radius:7px; font:inherit; cursor:pointer; margin-right:6px; }
+  button.dim { background:#33312D; }
+  input { background:#1E1D1B; border:1px solid #33312D; color:#EDEAE4; padding:8px 10px; border-radius:8px; font:inherit; }
+  pre { white-space:pre-wrap; font-size:12px; color:#B8B2A6; max-height:240px; overflow:auto; background:#161513; padding:10px; border-radius:8px; margin-top:8px; }
+  .audit div { padding:2px 0; font-size:12px; color:#8C877D; border-bottom:1px solid #22211E; }
+  .audit b { color:#EDEAE4; }
+</style>
+</head>
+<body>
+<h1>chore<b>less</b> / ops console</h1>
+<div id="login"><input id="key" type="password" placeholder="ops key"> <button onclick="go()">Enter</button></div>
+<div id="app" style="display:none">
+  <h2>Business numbers</h2>
+  <div class="metrics" id="metrics"></div>
+  <h2>Exception queue (human review gate)</h2>
+  <div id="exceptions"></div>
+  <h2>Audit log (append-only)</h2>
+  <div class="audit" id="audit"></div>
+</div>
+<script>
+const $ = (s) => document.querySelector(s);
+let KEY = sessionStorage.getItem("opskey") || "";
+const api = async (p, opts = {}) => {
+  const res = await fetch("/api/ops" + p, {
+    method: opts.body ? "POST" : "GET",
+    headers: { "Content-Type": "application/json", "X-Ops-Key": KEY },
+    body: opts.body ? JSON.stringify(opts.body) : undefined,
+  });
+  const d = await res.json();
+  if (!res.ok) throw new Error(d.error);
+  return d;
+};
+const esc = (s) => String(s ?? "").replace(/[&<>]/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;" }[c]));
+
+async function go() {
+  KEY = $("#key").value || KEY;
+  try {
+    const d = await api("/overview");
+    sessionStorage.setItem("opskey", KEY);
+    $("#login").style.display = "none"; $("#app").style.display = "block";
+    $("#metrics").innerHTML = Object.entries({ ...d.metrics, tasks_by_status: undefined })
+      .filter(([,v]) => v !== undefined && v !== null && typeof v !== "object")
+      .map(([k,v]) => `<div class="metric"><div class="v">${esc(v)}</div><div class="k">${esc(k)}</div></div>`).join("")
+      + Object.entries(d.metrics.tasks_by_status || {}).map(([k,v]) => `<div class="metric"><div class="v">${v}</div><div class="k">status: ${esc(k)}</div></div>`).join("");
+    $("#exceptions").innerHTML = d.exceptions.length ? d.exceptions.map((t) => `
+      <div class="card">
+        <b>${esc(t.id)}</b> · ${esc(t.service)} · attempts: ${t.attempts}
+        <div style="margin:8px 0">
+          <button onclick="resolve('${t.id}','release')">Release (human-QA pass)</button>
+          <button class="dim" onclick="resolve('${t.id}','retry')">Retry pipeline</button>
+          <button class="dim" onclick="resolve('${t.id}','refund')">Close &amp; refund</button>
+        </div>
+        ${t.qa ? `<div style="font-size:12px;color:#C77">QA: ${t.qa.score}/100 — ${esc((t.qa.failures||[]).join("; "))}</div>` : ""}
+        <pre>${esc(t.deliverable || t.steps.map((s)=>s.step+(s.error?": "+s.error:"")).join("\n"))}</pre>
+      </div>`).join("") : `<div class="card">Empty. The QA gate is holding.</div>`;
+    $("#audit").innerHTML = d.audit.slice().reverse().map((a) => `<div><b>${esc(a.event)}</b> ${esc(JSON.stringify({ ...a, event: undefined, ts: undefined }))} <span style="float:right">${new Date(a.ts).toLocaleTimeString()}</span></div>`).join("");
+  } catch (e) { alert(e.message); }
+}
+async function resolve(id, action) { await api(`/tasks/${id}/resolve`, { body: { action } }); go(); }
+if (KEY) go();
+setInterval(() => { if ($("#app").style.display === "block") go(); }, 5000);
+</script>
+</body>
+</html>

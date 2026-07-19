@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choreless — App</title>
+<style>
+  :root { --paper:#FAF7F2; --ink:#141414; --orange:#FF4D00; --line:#E5DFD5; --soft:#F1ECE3; }
+  * { box-sizing:border-box; margin:0; }
+  body { background:var(--paper); color:var(--ink); font:15px/1.55 ui-sans-serif,system-ui,sans-serif; }
+  header { display:flex; align-items:center; gap:16px; padding:14px 22px; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--paper); z-index:5; }
+  .logo { font-weight:800; letter-spacing:-.5px; font-size:19px; }
+  .logo b { color:var(--orange); }
+  nav { display:flex; gap:4px; margin-left:8px; }
+  nav button { background:none; border:none; padding:7px 12px; border-radius:8px; font:inherit; cursor:pointer; color:#555; }
+  nav button.on { background:var(--ink); color:var(--paper); }
+  .pill { margin-left:auto; display:flex; align-items:center; gap:10px; font-size:13px; }
+  .credits { background:var(--ink); color:var(--paper); padding:5px 12px; border-radius:99px; font-weight:700; }
+  .credits b { color:var(--orange); }
+  main { max-width:1060px; margin:0 auto; padding:26px 22px 80px; }
+  h1 { font-size:26px; letter-spacing:-.5px; margin-bottom:4px; }
+  h2 { font-size:17px; margin:22px 0 10px; }
+  .sub { color:#666; margin-bottom:18px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:18px; }
+  .card.click { cursor:pointer; transition:transform .1s, box-shadow .1s; }
+  .card.click:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(20,20,20,.07); }
+  .lane { font-size:11px; text-transform:uppercase; letter-spacing:1px; color:#999; }
+  .flag { color:var(--orange); font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:1px; }
+  .svc-name { font-weight:800; font-size:16px; margin:4px 0 2px; }
+  .tag { color:#555; font-size:13px; }
+  .cost { margin-top:10px; font-size:13px; font-weight:700; }
+  .cost span { color:var(--orange); }
+  button.primary { background:var(--orange); color:#fff; border:none; padding:11px 18px; border-radius:10px; font:inherit; font-weight:700; cursor:pointer; }
+  button.primary:disabled { opacity:.5; cursor:default; }
+  button.ghost { background:none; border:1px solid var(--line); padding:10px 16px; border-radius:10px; font:inherit; cursor:pointer; }
+  input, textarea, select { width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:10px; font:inherit; background:#fff; margin:4px 0 12px; }
+  textarea { min-height:110px; resize:vertical; }
+  label { font-size:13px; font-weight:600; }
+  .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .status { display:inline-block; padding:3px 10px; border-radius:99px; font-size:12px; font-weight:700; }
+  .s-queued,.s-running,.s-qa { background:#FFF3E9; color:#B85700; }
+  .s-awaiting_approval { background:#EDE9FF; color:#5B45D8; }
+  .s-delivered { background:#E7F5EC; color:#177B45; }
+  .s-exception,.s-closed_refunded { background:#FDE8E8; color:#B42323; }
+  .steps { font-size:13px; color:#666; margin:10px 0; }
+  .steps div { padding:2px 0; }
+  .deliverable { background:var(--soft); border:1px solid var(--line); border-radius:12px; padding:20px; margin-top:14px; white-space:pre-wrap; font-size:14px; overflow-x:auto; }
+  .deliverable h1,.deliverable h2,.deliverable h3 { margin:14px 0 6px; }
+  .auth-box { max-width:400px; margin:60px auto; }
+  .err { color:#B42323; font-size:13px; margin-bottom:10px; min-height:18px; }
+  .note { background:#FFF8EE; border:1px solid #F0E2C8; padding:10px 14px; border-radius:10px; font-size:13px; margin:12px 0; }
+  .plan { text-align:center; }
+  .plan .price { font-size:30px; font-weight:800; margin:6px 0; }
+  .drop { display:flex; gap:10px; }
+  .drop input { margin:0; flex:1; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  td,th { text-align:left; padding:7px 8px; border-bottom:1px solid var(--line); }
+  a.back { color:#666; text-decoration:none; font-size:13px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">chore<b>less</b> <span style="font-weight:400;color:#999;font-size:13px">/ app</span></div>
+  <nav id="nav" style="display:none">
+    <button data-v="services">Services</button>
+    <button data-v="tasks">My tasks</button>
+    <button data-v="autopilots">Autopilots</button>
+    <button data-v="billing">Credits &amp; plan</button>
+  </nav>
+  <div class="pill" id="pill" style="display:none">
+    <span class="credits">Credits <b id="credits">–</b></span>
+    <button class="ghost" style="padding:6px 12px" onclick="logout()">Sign out</button>
+  </div>
+</header>
+<main id="main"></main>
+
+<script>
+const $ = (s) => document.querySelector(s);
+let token = localStorage.getItem("choreless_token") || null;
+let me = null, catalog = null, view = "services", currentTask = null, pollTimer = null;
+
+const api = async (path, opts = {}) => {
+  const res = await fetch("/api" + path, {
+    method: opts.method || (opts.body ? "POST" : "GET"),
+    headers: { "Content-Type": "application/json", ...(token ? { Authorization: "Bearer " + token } : {}) },
+    body: opts.body ? JSON.stringify(opts.body) : undefined,
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || res.statusText);
+  return data;
+};
+
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+// minimal markdown: headings, bold, bullets, tables stay readable as text
+const md = (s) => esc(s)
+  .replace(/^### (.*)$/gm, "<h3>$1</h3>").replace(/^## (.*)$/gm, "<h2>$1</h2>").replace(/^# (.*)$/gm, "<h1>$1</h1>")
+  .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>").replace(/^&gt; (.*)$/gm, "<i style='color:#8a6d3b'>$1</i>");
+
+function logout() { localStorage.removeItem("choreless_token"); token = null; me = null; render(); }
+function setView(v) { view = v; currentTask = null; render(); }
+document.querySelectorAll("#nav button").forEach((b) => b.onclick = () => setView(b.dataset.v));
+
+async function refreshMe() {
+  if (!token) return;
+  try { const d = await api("/me"); me = d.customer; me.ledger = d.ledger; }
+  catch { logout(); }
+}
+
+async function boot() {
+  catalog = await api("/catalog");
+  await refreshMe();
+  render();
+}
+
+function render() {
+  clearInterval(pollTimer);
+  $("#nav").style.display = me ? "flex" : "none";
+  $("#pill").style.display = me ? "flex" : "none";
+  document.querySelectorAll("#nav button").forEach((b) => b.classList.toggle("on", b.dataset.v === view));
+  if (me) $("#credits").textContent = me.credits;
+  const m = $("#main");
+  if (!me) return renderAuth(m);
+  if (currentTask) return renderTask(m, currentTask);
+  ({ services: renderServices, tasks: renderTasks, autopilots: renderAutopilots, billing: renderBilling }[view])(m);
+}
+
+function renderAuth(m) {
+  m.innerHTML = `<div class="auth-box card">
+    <h1>Work delivered,<br>not chatted.</h1>
+    <p class="sub">Drop tasks. AI pipelines with a QA gate deliver finished work.</p>
+    <div class="err" id="err"></div>
+    <label>Email</label><input id="email" type="email" autocomplete="email">
+    <label>Password</label><input id="pass" type="password" autocomplete="current-password">
+    <div class="row">
+      <button class="primary" onclick="doAuth('signup')">Create account — 3 free credits</button>
+      <button class="ghost" onclick="doAuth('login')">Sign in</button>
+    </div>
+    <p style="margin-top:12px;font-size:12px;color:#999">Mode: ${esc(catalog.mode)}</p>
+  </div>`;
+}
+
+async function doAuth(kind) {
+  try {
+    const d = await api("/" + kind, { body: { email: $("#email").value.trim(), password: $("#pass").value } });
+    token = d.token; localStorage.setItem("choreless_token", token);
+    await refreshMe(); view = "services"; render();
+  } catch (e) { $("#err").textContent = e.message; }
+}
+
+function renderServices(m) {
+  const cards = catalog.services.map((s) => `
+    <div class="card click" onclick="openIntake('${s.id}')">
+      <div class="${s.flagship ? "flag" : "lane"}">${s.flagship ? "★ New — no one else offers this" : s.lane}</div>
+      <div class="svc-name">${esc(s.name)}</div>
+      <div class="tag">${esc(s.tagline)}</div>
+      <div class="cost"><span>${s.credits} credits</span>${s.autopilot ? " · ⚡ autopilot-capable" : ""}${s.requires_approval ? " · one-tap approval before it ships" : ""}</div>
+    </div>`).join("");
+  m.innerHTML = `
+    <h1>Drop a task</h1>
+    <p class="sub">Describe anything — we route it to the right pipeline. Or pick a service below.</p>
+    <div class="drop"><input id="brief" placeholder="e.g. “I'm about to sign a lease and clause 14 scares me”"><button class="primary" onclick="doRoute()">Route it</button></div>
+    <div id="routeResult"></div>
+    <h2>Catalog</h2>
+    <div class="grid">${cards}</div>`;
+}
+
+async function doRoute() {
+  const text = $("#brief").value.trim();
+  if (!text) return;
+  const d = await api("/route", { body: { text } });
+  $("#routeResult").innerHTML = d.routed
+    ? `<div class="note">Routed to <b>${esc(d.name)}</b> (${d.credits} credits, ${Math.round(d.confidence*100)}% confidence). <button class="primary" style="padding:6px 12px;margin-left:8px" onclick="openIntake('${d.service}')">Continue</button></div>`
+    : `<div class="note">${esc(d.note)}</div>`;
+}
+
+function openIntake(serviceId) {
+  const s = catalog.services.find((x) => x.id === serviceId);
+  const m = $("#main");
+  const fields = s.intake.map((f) => `
+    <label>${esc(f.label)}${f.required ? " *" : ""}</label>
+    ${f.type === "textarea" ? `<textarea id="f_${f.key}"></textarea>` : `<input id="f_${f.key}">`}`).join("");
+  m.innerHTML = `
+    <a class="back" href="#" onclick="setView('services');return false">← All services</a>
+    <h1 style="margin-top:10px">${esc(s.name)}</h1>
+    <p class="sub">${esc(s.description)}</p>
+    <div class="card" style="max-width:680px">
+      <div class="err" id="err"></div>
+      ${fields}
+      <div class="row">
+        <button class="primary" onclick="submitTask('${s.id}')">Run it — ${s.credits} credits</button>
+        <span style="font-size:12px;color:#999">Credits are only debited when work is delivered.</span>
+      </div>
+    </div>`;
+  window.currentIntake = s;
+}
+
+async function submitTask(serviceId) {
+  const s = catalog.services.find((x) => x.id === serviceId);
+  const inputs = {};
+  for (const f of s.intake) inputs[f.key] = $("#f_" + f.key).value.trim();
+  try {
+    const d = await api("/tasks", { body: { service: serviceId, inputs } });
+    currentTask = d.task.id; view = "tasks"; render();
+  } catch (e) { $("#err").textContent = e.message; }
+}
+
+async function renderTasks(m) {
+  const d = await api("/tasks");
+  if (!d.tasks.length) {
+    m.innerHTML = `<h1>My tasks</h1><p class="sub">Nothing yet — drop your first task.</p>`;
+    return;
+  }
+  m.innerHTML = `<h1>My tasks</h1><div class="grid">${d.tasks.map((t) => {
+    const s = catalog.services.find((x) => x.id === t.service);
+    return `<div class="card click" onclick="currentTask='${t.id}';render()">
+      <div class="row" style="justify-content:space-between"><b>${esc(s?.name || t.service)}</b>
+      <span class="status s-${t.status}">${t.status.replace(/_/g," ")}</span></div>
+      <div style="font-size:12px;color:#999;margin-top:6px">${new Date(t.created_at).toLocaleString()}</div>
+    </div>`; }).join("")}</div>`;
+}
+
+async function renderTask(m, taskId) {
+  const { task: t } = await api("/tasks/" + taskId);
+  const s = catalog.services.find((x) => x.id === t.service);
+  const active = ["queued","running","qa"].includes(t.status);
+  m.innerHTML = `
+    <a class="back" href="#" onclick="currentTask=null;render();return false">← My tasks</a>
+    <div class="row" style="justify-content:space-between;margin-top:10px">
+      <h1>${esc(s?.name || t.service)}</h1>
+      <span class="status s-${t.status}">${t.status.replace(/_/g," ")}</span>
+    </div>
+    <div class="steps">${t.steps.map((st) => `<div>› ${esc(st.step)} <span style="color:#bbb">${new Date(st.ts).toLocaleTimeString()}</span>${st.error ? ` — <span style="color:#B42323">${esc(st.error)}</span>` : ""}</div>`).join("")}</div>
+    ${t.qa ? `<div class="note">QA score: <b>${t.qa.score}/100</b>${t.qa.failures?.length ? " — " + esc(t.qa.failures.join("; ")) : " — passed"}</div>` : ""}
+    ${t.status === "awaiting_approval" ? `<div class="row" style="margin:12px 0">
+        <button class="primary" onclick="act('${t.id}','approve')">Approve &amp; deliver</button>
+        <button class="ghost" onclick="act('${t.id}','revise')">Request revision</button>
+      </div><div class="note">This service takes an outward-facing action, so nothing ships without your approval.</div>` : ""}
+    ${t.status === "delivered" ? `<div class="row" style="margin:12px 0"><button class="ghost" onclick="act('${t.id}','revise')">Free revision (credit returned)</button></div>` : ""}
+    ${t.deliverable ? `<div class="deliverable">${md(t.deliverable)}</div>` : active ? `<div class="note">Pipeline is running — this page updates live.</div>` : ""}`;
+  if (active) pollTimer = setInterval(async () => { await refreshMe(); renderTask(m, taskId); $("#credits").textContent = me.credits; }, 2000);
+}
+
+async function act(taskId, kind) {
+  try {
+    if (kind === "approve") await api(`/tasks/${taskId}/approve`);
+    else {
+      const notes = prompt("What should change?") || "";
+      await api(`/tasks/${taskId}/revise`, { body: { notes } });
+    }
+    await refreshMe(); render();
+  } catch (e) { alert(e.message); }
+}
+
+async function renderAutopilots(m) {
+  const d = await api("/autopilots");
+  const capable = catalog.services.filter((s) => s.autopilot);
+  m.innerHTML = `
+    <h1>Autopilots</h1>
+    <p class="sub">Services that run on a schedule without being asked. ⚡</p>
+    <div class="card" style="max-width:560px">
+      <label>Service</label>
+      <select id="apSvc">${capable.map((s) => `<option value="${s.id}">${esc(s.name)} (${s.credits} cr/run)</option>`).join("")}</select>
+      <label>Cadence</label>
+      <select id="apCad"><option>weekly</option><option>daily</option><option>monthly</option></select>
+      <div class="note">The autopilot reuses the intake you provide on its first manual run of that service. Run the service once first, then enable.</div>
+      <button class="primary" onclick="addAutopilot()">Enable autopilot</button>
+      <div class="err" id="err"></div>
+    </div>
+    <h2>Active</h2>
+    ${d.autopilots.filter((a) => a.enabled).map((a) => {
+      const s = catalog.services.find((x) => x.id === a.service);
+      return `<div class="card row" style="justify-content:space-between;margin-bottom:10px">
+        <div><b>${esc(s?.name)}</b> · ${a.cadence} · next run ${new Date(a.next_run).toLocaleString()}</div>
+        <button class="ghost" onclick="api('/autopilots/${a.id}',{method:'DELETE'}).then(render)">Disable</button>
+      </div>`; }).join("") || `<p class="sub">None yet.</p>`}`;
+}
+
+async function addAutopilot() {
+  try {
+    const svcId = $("#apSvc").value;
+    const tasks = (await api("/tasks")).tasks.filter((t) => t.service === svcId);
+    const inputs = tasks.length ? tasks[0].inputs : {};
+    await api("/autopilots", { body: { service: svcId, cadence: $("#apCad").value, inputs } });
+    render();
+  } catch (e) { $("#err").textContent = e.message; }
+}
+
+function renderBilling(m) {
+  const plans = ["starter","pro","business"].map((p) => catalog.plans[p]);
+  m.innerHTML = `
+    <h1>Credits &amp; plan</h1>
+    <p class="sub">Current plan: <b>${esc(me.plan)}</b> · ${me.credits} credits. Work misses the brief → free revision + credit returned.</p>
+    <div class="grid">
+      ${plans.map((p) => `<div class="card plan ${me.plan===p.id?'':'click'}">
+        <div class="lane">${p.id === "pro" ? "★ most popular" : "&nbsp;"}</div>
+        <b>${p.name}</b>
+        <div class="price">$${p.priceUsd}<span style="font-size:13px;color:#999">/mo</span></div>
+        <div style="font-size:13px;color:#555">${p.credits} credits · ${p.sla_hours}h turnaround</div>
+        <div style="margin-top:12px">${me.plan===p.id ? "<b>Current</b>" : `<button class="primary" onclick="buy('${p.id}')">Choose</button>`}</div>
+      </div>`).join("")}
+      <div class="card plan"><div class="lane">&nbsp;</div><b>Top-up</b>
+        <div class="price">$${catalog.plans.topup.priceUsd}</div>
+        <div style="font-size:13px;color:#555">${catalog.plans.topup.credits} extra credits, one-time</div>
+        <div style="margin-top:12px"><button class="primary" onclick="buy('topup')">Buy</button></div></div>
+    </div>
+    <h2>Persistent profile (your voice &amp; brand — used by every pipeline)</h2>
+    <div class="card" style="max-width:680px">
+      <textarea id="profile" placeholder="e.g. I run a 12-seat coffee shop in Austin called Halcyon. Voice: warm, a little wry. Never use exclamation marks.">${esc(me.profile || "")}</textarea>
+      <button class="ghost" onclick="api('/profile',{body:{profile:$('#profile').value}}).then(()=>alert('Saved'))">Save profile</button>
+    </div>
+    <h2>Ledger</h2>
+    <table><tr><th>When</th><th>Δ</th><th>Reason</th></tr>
+      ${(me.ledger||[]).slice().reverse().map((e) => `<tr><td>${new Date(e.ts).toLocaleString()}</td><td style="color:${e.delta<0?'#B42323':'#177B45'}">${e.delta>0?'+':''}${e.delta}</td><td>${esc(e.reason)}</td></tr>`).join("")}
+    </table>`;
+}
+
+async function buy(planId) {
+  const d = await api("/checkout", { body: { plan: planId } });
+  if (d.url) location.href = d.url;
+  else { await refreshMe(); render(); alert(`Dev billing: +${d.granted} credits granted instantly (set STRIPE_SECRET_KEY for real checkout).`); }
+}
+
+boot().catch((e) => { $("#main").innerHTML = `<p class="err">Failed to load: ${esc(e.message)}</p>`; });
+</script>
+</body>
+</html>

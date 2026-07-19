@@ -1,0 +1,15 @@
+{
+  "name": "choreless",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Choreless — the subscription that does the work. Sells and fulfills AI-executed services end-to-end.",
+  "scripts": {
+    "start": "node server/server.mjs",
+    "test": "node server/test.mjs",
+    "build:site": "node build.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.110.0"
+  }
+}
