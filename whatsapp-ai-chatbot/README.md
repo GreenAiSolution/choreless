@@ -26,8 +26,16 @@ WhatsApp Trigger ─▶ Route Types ─┬─ Text ─────────�
 
 | File | What it is |
 | --- | --- |
-| `workflow.json` | The main chatbot workflow — import this into n8n. |
+| `workflow.json` | The base chatbot workflow — general assistant. Import this into n8n. |
+| `workflow-quickbooks-specialist.json` | **QuickBooks specialist** — same pipeline + live QuickBooks Online query & report tools. |
+| `workflow-customer-support.json` | **Customer support agent** for any business — RAG + escalation/ticket tool. |
 | `ingest-knowledge-base.json` | Companion workflow to load PDFs/docs into the vector store (RAG is empty until you run this). |
+| `build-variants.mjs` | Regenerates the two specialized workflows from `workflow.json` (persona + tools only differ). |
+
+All three chatbot workflows share the **identical multimodal front-end** (WhatsApp trigger →
+type routing → voice/image/document handling → unified prompt → agent → reply). Only the
+**agent's system prompt and tools** change. Edit `workflow.json` and run `node build-variants.mjs`
+to propagate pipeline changes to both specialists.
 
 ## "Huge context on anything"
 
@@ -113,6 +121,49 @@ Message your WhatsApp number:
 | Knowledge Base Agent (Chat / Memory / Tool) | `Knowledge Base Agent` + `OpenAI Chat Model` + `Simple Memory` + `MongoDB Vector Search` |
 | Embeddings OpenAI | `Embeddings OpenAI` |
 | Send Response | `Send Response` (WhatsApp text) |
+
+---
+
+## The two specialists
+
+Both import and set up **exactly like the base workflow** (steps 1–7 above) — same
+WhatsApp, OpenAI, MongoDB and Header-Auth credentials. Replace **`YOUR BUSINESS`** in the
+agent's system message with your company name.
+
+### QuickBooks Specialist — `workflow-quickbooks-specialist.json`
+A live bookkeeping assistant. On top of RAG it gets two QuickBooks Online tools the agent
+calls on demand:
+
+- **`quickbooks_query`** — runs read-only QuickBooks SQL (invoices, customers, bills,
+  vendors, payments, accounts). e.g. *"Which invoices are overdue?"* →
+  `SELECT * FROM Invoice WHERE Balance > '0' ORDERBY DueDate`.
+- **`quickbooks_report`** — pulls ProfitAndLoss, BalanceSheet, AgedReceivables,
+  AgedPayables, CustomerBalance for a date range.
+
+**Extra setup:**
+1. In n8n create a **QuickBooks Online OAuth2** credential (`quickBooksOAuth2Api`) — client
+   id/secret from your Intuit developer app, and authorize it.
+2. In both QuickBooks tool nodes, replace **`YOUR_REALM_ID`** in the URL with your
+   QuickBooks **Company (realm) ID** (Intuit → your app → the connected company).
+3. For the **production** Intuit environment the host is `quickbooks.api.intuit.com`
+   (already set); for the **sandbox** use `sandbox-quickbooks.api.intuit.com`.
+4. It's **read-only by design.** To let it create invoices/payments, add a `POST` HTTP tool
+   to `.../v3/company/YOUR_REALM_ID/invoice` and update rule 6 in the system prompt.
+
+### Customer Support Agent — `workflow-customer-support.json`
+A business-agnostic front-line agent. RAG-grounded, cites sources, and escalates cleanly:
+
+- **`create_support_ticket`** — the agent calls this to log/escalate an issue (summary,
+  customer number, category, priority) when the KB can't resolve it or a human is needed.
+
+**Extra setup:**
+1. Load your FAQs, policies, product info and hours via `ingest-knowledge-base.json`.
+2. In **Create Support Ticket**, replace **`YOUR_TICKET_WEBHOOK_URL`** with your endpoint —
+   a Zendesk/Freshdesk/HubSpot webhook, a Slack incoming webhook, an n8n webhook that opens
+   a ticket, or a Google Sheet append. Adjust the JSON body to match your system's fields.
+3. If you don't want escalation yet, just delete that node — the agent still answers from RAG.
+
+---
 
 ## Notes & gotchas
 - **Verify node params on import.** n8n occasionally renames parameters between node
