@@ -134,11 +134,20 @@ agent's system message with your company name.
 A live bookkeeping assistant. On top of RAG it gets two QuickBooks Online tools the agent
 calls on demand:
 
-- **`quickbooks_query`** — runs read-only QuickBooks SQL (invoices, customers, bills,
+- **`QuickBooks_Query`** — runs read-only QuickBooks SQL (invoices, customers, bills,
   vendors, payments, accounts). e.g. *"Which invoices are overdue?"* →
   `SELECT * FROM Invoice WHERE Balance > '0' ORDERBY DueDate`.
-- **`quickbooks_report`** — pulls ProfitAndLoss, BalanceSheet, AgedReceivables,
+- **`QuickBooks_Report`** — pulls ProfitAndLoss, BalanceSheet, AgedReceivables,
   AgedPayables, CustomerBalance for a date range.
+
+**Write actions (gated):**
+- **`QuickBooks_Create_Invoice`** and **`QuickBooks_Record_Payment`** let the bot write to
+  QuickBooks — but only behind a **confirmation protocol** baked into the system prompt: the
+  agent must first summarize the exact change (customer, amount, line item, due date) and
+  ask the user to reply **`CONFIRM`**. It calls the write tool only after seeing that
+  `CONFIRM` in the conversation memory, and passes the user's word into a required
+  `userConfirmation` field. One `CONFIRM` = one write; missing details are asked for first.
+  To disable writes entirely, delete those two nodes — reads still work.
 
 **Extra setup:**
 1. In n8n create a **QuickBooks Online OAuth2** credential (`quickBooksOAuth2Api`) — client
@@ -147,8 +156,10 @@ calls on demand:
    QuickBooks **Company (realm) ID** (Intuit → your app → the connected company).
 3. For the **production** Intuit environment the host is `quickbooks.api.intuit.com`
    (already set); for the **sandbox** use `sandbox-quickbooks.api.intuit.com`.
-4. It's **read-only by design.** To let it create invoices/payments, add a `POST` HTTP tool
-   to `.../v3/company/YOUR_REALM_ID/invoice` and update rule 6 in the system prompt.
+4. **Write tools are included** (`QuickBooks_Create_Invoice`, `QuickBooks_Record_Payment`)
+   and gated by the CONFIRM protocol in the system prompt. They use the same OAuth2
+   credential and realm id. Test in the Intuit **sandbox** first. Remove both nodes if you
+   want a strictly read-only bot.
 
 ### Customer Support Agent — `workflow-customer-support.json`
 A business-agnostic front-line agent. RAG-grounded, cites sources, and escalates cleanly:

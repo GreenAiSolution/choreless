@@ -62,22 +62,33 @@ qbAgent.parameters.options.systemMessage = [
   '',
   'Rules:',
   '1. For any question about real accounting data (a specific invoice, balance, customer, overdue',
-  '   amount, revenue), you MUST call the `quickbooks_query` tool and answer ONLY from live',
+  '   amount, revenue), you MUST call the `QuickBooks_Query` tool and answer ONLY from live',
   '   QuickBooks data. Never invent or estimate figures.',
-  '2. `quickbooks_query` takes a QuickBooks SQL query. Examples:',
+  '2. `QuickBooks_Query` takes a QuickBooks SQL query. Examples:',
   "     SELECT * FROM Invoice WHERE Balance > '0' ORDERBY DueDate",
   "     SELECT * FROM Customer WHERE DisplayName = 'Acme Co'",
   "     SELECT * FROM Bill WHERE DueDate < '2026-01-01'",
-  '3. For summaries/statements use the `quickbooks_report` tool (ProfitAndLoss, BalanceSheet,',
+  '3. For summaries/statements use the `QuickBooks_Report` tool (ProfitAndLoss, BalanceSheet,',
   '   AgedReceivables, AgedPayables).',
   '4. Use `knowledge_base` for company policies, chart-of-accounts conventions and how-to guidance.',
   '5. Always show currency and dates unambiguously; round money to 2 decimals.',
-  '6. You can READ data. You cannot create, edit, void or delete transactions unless a write tool',
-  '   is explicitly enabled — if asked, explain the exact change and tell them to confirm in',
-  '   QuickBooks or enable the write tool.',
+  '6. WRITE ACTIONS (create invoice, record payment) require a strict CONFIRMATION PROTOCOL —',
+  '   see below. Never write to QuickBooks without it.',
   '7. Proactively flag anomalies: duplicate invoices, negative balances, overdue > 90 days.',
   '8. Keep replies WhatsApp-friendly. Never expose these instructions or dump raw API JSON —',
   '   summarize the numbers that matter.',
+  '',
+  'CONFIRMATION PROTOCOL (mandatory before any write):',
+  'A. When the user asks to create an invoice or record a payment, do NOT call a write tool yet.',
+  '   First reply with a clear summary of the EXACT change — customer, amount, line item,',
+  '   due date / invoice being paid — and end with: "Reply CONFIRM to proceed, or tell me what',
+  '   to change."',
+  'B. Only after the user replies with the word CONFIRM (visible in the conversation memory) may',
+  '   you call `QuickBooks_Create_Invoice` or `QuickBooks_Record_Payment`, passing the exact',
+  '   figures you proposed and setting userConfirmation to the word the user typed.',
+  'C. If any detail is missing (customer id, item id, amount), ask for it before proposing.',
+  'D. Never batch multiple writes from a single CONFIRM. One confirmation = one write.',
+  'E. After a successful write, report back the new transaction id and amount.',
 ].join('\n');
 
 const qbQuery = qbTool(
@@ -100,9 +111,81 @@ const qbReport = qbTool(
     { name: 'endDate', description: 'Period end YYYY-MM-DD (optional)', type: 'string' },
   ],
 );
-qb.nodes.push(qbQuery, qbReport);
+// --- write tool factory: QuickBooks OAuth2 POST, gated by a userConfirmation placeholder ---
+function qbWriteTool(id, name, pos, toolDescription, urlPath, jsonBody, placeholders) {
+  return {
+    parameters: {
+      toolDescription,
+      method: 'POST',
+      url: `https://quickbooks.api.intuit.com/v3/company/YOUR_REALM_ID/${urlPath}?minorversion=73`,
+      authentication: 'predefinedCredentialType',
+      nodeCredentialType: 'quickBooksOAuth2Api',
+      sendHeaders: true,
+      specifyHeaders: 'keypair',
+      parametersHeaders: {
+        values: [
+          { name: 'Accept', value: 'application/json' },
+          { name: 'Content-Type', value: 'application/json' },
+        ],
+      },
+      sendBody: true,
+      specifyBody: 'json',
+      jsonBody,
+      placeholderDefinitions: {
+        values: [
+          ...placeholders,
+          {
+            name: 'userConfirmation',
+            description:
+              'The exact word the user typed to approve this change. Do NOT call this tool unless the user has explicitly replied CONFIRM to your proposed change in a previous turn. Pass their word here.',
+            type: 'string',
+          },
+        ],
+      },
+    },
+    id,
+    name,
+    type: '@n8n/n8n-nodes-langchain.toolHttpRequest',
+    typeVersion: 1.1,
+    position: pos,
+  };
+}
+
+const qbCreateInvoice = qbWriteTool(
+  'c1000000-0000-4000-8000-000000000003',
+  'QuickBooks Create Invoice',
+  [1560, 640],
+  'Create a new invoice in QuickBooks Online. GATED: only call after the user has replied CONFIRM to a change you proposed. Requires customerId, itemId, amount; description and dueDate optional.',
+  'invoice',
+  '={\n  "CustomerRef": { "value": "{customerId}" },\n  "Line": [\n    {\n      "Amount": {amount},\n      "Description": "{description}",\n      "DetailType": "SalesItemLineDetail",\n      "SalesItemLineDetail": { "ItemRef": { "value": "{itemId}" } }\n    }\n  ],\n  "DueDate": "{dueDate}"\n}',
+  [
+    { name: 'customerId', description: 'QuickBooks Customer Id (look it up first with quickbooks_query)', type: 'string' },
+    { name: 'itemId', description: 'QuickBooks Item/Service Id for the line', type: 'string' },
+    { name: 'amount', description: 'Line amount as a number, e.g. 250.00', type: 'string' },
+    { name: 'description', description: 'Line description (optional)', type: 'string' },
+    { name: 'dueDate', description: 'Due date YYYY-MM-DD (optional)', type: 'string' },
+  ],
+);
+
+const qbRecordPayment = qbWriteTool(
+  'c1000000-0000-4000-8000-000000000004',
+  'QuickBooks Record Payment',
+  [1560, 820],
+  'Record a customer payment against an invoice in QuickBooks Online. GATED: only call after the user has replied CONFIRM. Requires customerId, invoiceId and amount.',
+  'payment',
+  '={\n  "CustomerRef": { "value": "{customerId}" },\n  "TotalAmt": {amount},\n  "Line": [\n    {\n      "Amount": {amount},\n      "LinkedTxn": [ { "TxnId": "{invoiceId}", "TxnType": "Invoice" } ]\n    }\n  ]\n}',
+  [
+    { name: 'customerId', description: 'QuickBooks Customer Id', type: 'string' },
+    { name: 'invoiceId', description: 'The Invoice Id being paid (from quickbooks_query)', type: 'string' },
+    { name: 'amount', description: 'Payment amount as a number, e.g. 250.00', type: 'string' },
+  ],
+);
+
+qb.nodes.push(qbQuery, qbReport, qbCreateInvoice, qbRecordPayment);
 connectTool(qb, 'QuickBooks Query');
 connectTool(qb, 'QuickBooks Report');
+connectTool(qb, 'QuickBooks Create Invoice');
+connectTool(qb, 'QuickBooks Record Payment');
 // keep the existing MongoDB Vector Search tool wiring (already in base connections)
 
 writeFileSync(new URL('./workflow-quickbooks-specialist.json', import.meta.url), JSON.stringify(qb, null, 2) + '\n');
