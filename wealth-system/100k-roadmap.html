@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reputation Engine — the $100k Roadmap</title>
+<style>
+  :root{
+    --paper:#FAF7F2; --ink:#141414; --orange:#FF4D00;
+    --muted:#6b6b6b; --line:#e7e2d9; --card:#fffdfa; --good:#0a7d3f;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--paper); color:var(--ink);
+    font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:960px;margin:0 auto;padding:32px 20px 80px}
+  .kicker{color:var(--orange);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:12px;margin:0 0 8px}
+  h1{font-size:clamp(28px,5vw,44px);line-height:1.05;margin:0 0 10px;letter-spacing:-.02em}
+  h1 span{color:var(--orange)}
+  .sub{color:var(--muted);font-size:17px;max-width:640px;margin:0 0 28px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+  .card h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 18px}
+  .ctrl{margin:0 0 18px}
+  .ctrl:last-child{margin-bottom:0}
+  .ctrl label{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;margin:0 0 8px}
+  .ctrl label b{font-size:16px}
+  .ctrl .val{font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+  input[type=range]{width:100%;accent-color:var(--orange);height:24px}
+  .hint{color:var(--muted);font-size:12px;margin:4px 0 0}
+  .headline{background:var(--ink);color:var(--paper);border-radius:16px;padding:26px;margin:0 0 24px;position:relative;overflow:hidden}
+  .headline .big{font-size:clamp(30px,6vw,52px);font-weight:800;letter-spacing:-.02em;line-height:1;margin:6px 0}
+  .headline .big em{color:var(--orange);font-style:normal}
+  .headline .lead{font-size:14px;opacity:.75;text-transform:uppercase;letter-spacing:.06em;margin:0}
+  .headline .note{font-size:14px;opacity:.85;margin:10px 0 0}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0 0}
+  @media(max-width:600px){.stats{grid-template-columns:1fr}}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .stat .n{font-size:26px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .stat .l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:6px 0 0}
+  .chartcard{margin:24px 0 0}
+  svg{width:100%;height:auto;display:block}
+  .axislabel{fill:var(--muted);font-size:11px}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin:12px 0 0}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+  .foot{color:var(--muted);font-size:13px;margin:30px 0 0;border-top:1px solid var(--line);padding-top:18px}
+  .foot b{color:var(--ink)}
+  .pill{display:inline-block;background:rgba(255,77,0,.1);color:var(--orange);font-weight:700;font-size:12px;padding:4px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:.05em}
+  a{color:var(--orange)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">Reputation Engine · Wealth System</p>
+  <h1>The road to <span>$100,000</span> is ~30 small clients.</h1>
+  <p class="sub">Drag the numbers to match your plan. The model runs a 36-month projection and shows the exact month your <b>cumulative take-home profit</b> crosses $100k. Defaults are deliberately conservative.</p>
+
+  <div class="headline">
+    <p class="lead">At these numbers you hit $100k in</p>
+    <div class="big"><em id="crossMonth">—</em></div>
+    <p class="note" id="crossNote">—</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="n" id="sClients">—</div><div class="l">Clients at that point</div></div>
+    <div class="stat"><div class="n" id="sMRR">—</div><div class="l">Monthly recurring revenue</div></div>
+    <div class="stat"><div class="n" id="sProfitMo">—</div><div class="l">Monthly profit by then</div></div>
+  </div>
+
+  <div class="chartcard card">
+    <h2>Cumulative take-home profit over 36 months</h2>
+    <div id="chart"></div>
+    <div class="legend">
+      <span><i style="background:var(--orange)"></i>Cumulative profit</span>
+      <span><i style="background:var(--ink)"></i>$100k goal line</span>
+    </div>
+  </div>
+
+  <div class="grid" style="margin-top:24px">
+    <div class="card">
+      <h2>The offer</h2>
+      <div class="ctrl">
+        <label><b>Price per client / month</b><span class="val" id="vPrice"></span></label>
+        <input type="range" id="price" min="150" max="600" step="10" value="350">
+        <p class="hint">Sweet spot for local review management is $297–$497.</p>
+      </div>
+      <div class="ctrl">
+        <label>Cost to serve one client / month<span class="val" id="vCost"></span></label>
+        <input type="range" id="cost" min="0" max="150" step="5" value="40">
+        <p class="hint">SMS + review platform + AI drafting. Usually $30–$60.</p>
+      </div>
+      <div class="ctrl">
+        <label>Fixed overhead / month<span class="val" id="vOver"></span></label>
+        <input type="range" id="over" min="0" max="800" step="25" value="150">
+        <p class="hint">Base software, domain, email — before any client.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Your growth</h2>
+      <div class="ctrl">
+        <label><b>New clients you close / month</b><span class="val" id="vAdd"></span></label>
+        <input type="range" id="add" min="1" max="8" step="0.5" value="2.5">
+        <p class="hint">~100 outreach touches/week realistically closes 2–3.</p>
+      </div>
+      <div class="ctrl">
+        <label>Monthly churn (clients who cancel)<span class="val" id="vChurn"></span></label>
+        <input type="range" id="churn" min="0" max="12" step="0.5" value="4">
+        <p class="hint">The monthly report is what keeps this low. Aim under 4%.</p>
+      </div>
+      <div class="ctrl">
+        <label>Months before your first client<span class="val" id="vRamp"></span></label>
+        <input type="range" id="ramp" min="0" max="4" step="1" value="1">
+        <p class="hint">Setup + first outreach cycle. Honest is 1–2 months.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="foot">
+    <span class="pill">Reality check</span>&nbsp; This is a model, not a promise. It assumes you actually do the outreach every week — that's the one input no slider controls. The numbers here are conservative on purpose: real review-management retainers often run higher than $350 and churn lower than 4%. <b>"$100k" here means cumulative money in your pocket</b> (revenue minus all costs), not lifetime revenue. See <b>BUSINESS-PLAN.md</b> and <b>90-DAY-PLAYBOOK.md</b> for how to actually execute it.
+  </p>
+</div>
+
+<script>
+(function(){
+  var GOAL = 100000, MONTHS = 36;
+  var ids = ["price","cost","over","add","churn","ramp"];
+  var el = {}; ids.forEach(function(i){ el[i]=document.getElementById(i); });
+  var $ = function(id){ return document.getElementById(id); };
+  var money = function(n){ return "$"+Math.round(n).toLocaleString("en-US"); };
+
+  function monthLabel(m){ // m is 1-indexed month count
+    if(m<=0) return "—";
+    var y = Math.floor(m/12), mo = m%12;
+    if(y===0) return m+" months";
+    if(mo===0) return y+(y===1?" year":" years");
+    return y+"y "+mo+"m";
+  }
+
+  function simulate(p){
+    var clients=0, cum=0, series=[], cross=null, crossData=null;
+    for(var m=1;m<=MONTHS;m++){
+      // ramp: no clients acquired until 'ramp' months have passed
+      if(m>p.ramp){
+        clients = clients*(1-p.churn/100) + p.add;
+      }
+      var rev = clients*p.price;
+      var costs = clients*p.cost + p.over;
+      var profit = rev - costs;
+      cum += profit;
+      series.push({m:m, clients:clients, mrr:rev, profit:profit, cum:cum});
+      if(cross===null && cum>=GOAL){ cross=m; crossData=series[series.length-1]; }
+    }
+    return {series:series, cross:cross, crossData:crossData};
+  }
+
+  function drawChart(series){
+    var W=880, H=300, padL=64, padR=20, padT=20, padB=34;
+    var iw=W-padL-padR, ih=H-padT-padB;
+    var maxCum = Math.max(GOAL*1.15, series[series.length-1].cum, 1);
+    var x = function(m){ return padL + (m-1)/(MONTHS-1)*iw; };
+    var y = function(v){ return padT + ih - (v/maxCum)*ih; };
+
+    // area path
+    var line="", area="M"+x(1)+","+y(0);
+    series.forEach(function(d,i){
+      line += (i===0?"M":"L")+x(d.m).toFixed(1)+","+y(d.cum).toFixed(1)+" ";
+      area += "L"+x(d.m).toFixed(1)+","+y(d.cum).toFixed(1)+" ";
+    });
+    area += "L"+x(MONTHS)+","+y(0)+"Z";
+
+    var goalY = y(GOAL);
+    // y gridlines
+    var grid="";
+    for(var g=0; g<=4; g++){
+      var gv = maxCum*g/4, gy=y(gv);
+      grid += '<line x1="'+padL+'" y1="'+gy.toFixed(1)+'" x2="'+(W-padR)+'" y2="'+gy.toFixed(1)+'" stroke="#e7e2d9" stroke-width="1"/>';
+      grid += '<text class="axislabel" x="'+(padL-8)+'" y="'+(gy+4).toFixed(1)+'" text-anchor="end">$'+Math.round(gv/1000)+'k</text>';
+    }
+    // x labels every 6 months
+    var xl="";
+    for(var mm=6; mm<=MONTHS; mm+=6){
+      xl += '<text class="axislabel" x="'+x(mm).toFixed(1)+'" y="'+(H-12)+'" text-anchor="middle">m'+mm+'</text>';
+    }
+
+    var cross = null;
+    for(var i=0;i<series.length;i++){ if(series[i].cum>=GOAL){ cross=series[i]; break; } }
+    var marker = "";
+    if(cross){
+      var cx=x(cross.m), cy=y(cross.cum);
+      marker = '<line x1="'+cx.toFixed(1)+'" y1="'+padT+'" x2="'+cx.toFixed(1)+'" y2="'+(padT+ih)+'" stroke="#0a7d3f" stroke-width="1.5" stroke-dasharray="4 4"/>'+
+               '<circle cx="'+cx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" r="6" fill="#0a7d3f"/>'+
+               '<circle cx="'+cx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" r="11" fill="#0a7d3f" opacity="0.18"/>';
+    }
+
+    var svg = '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Cumulative profit chart">'
+      + grid
+      + '<path d="'+area+'" fill="rgba(255,77,0,0.10)"/>'
+      + '<line x1="'+padL+'" y1="'+goalY.toFixed(1)+'" x2="'+(W-padR)+'" y2="'+goalY.toFixed(1)+'" stroke="#141414" stroke-width="1.5"/>'
+      + '<text class="axislabel" x="'+(W-padR)+'" y="'+(goalY-7).toFixed(1)+'" text-anchor="end" style="fill:#141414;font-weight:700">$100k goal</text>'
+      + '<path d="'+line+'" fill="none" stroke="#FF4D00" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>'
+      + marker + xl
+      + '</svg>';
+    $("chart").innerHTML = svg;
+  }
+
+  function render(){
+    var p = {
+      price:+el.price.value, cost:+el.cost.value, over:+el.over.value,
+      add:+el.add.value, churn:+el.churn.value, ramp:+el.ramp.value
+    };
+    // labels
+    $("vPrice").textContent = money(p.price);
+    $("vCost").textContent  = money(p.cost);
+    $("vOver").textContent  = money(p.over);
+    $("vAdd").textContent   = p.add.toFixed(1).replace(/\.0$/,"");
+    $("vChurn").textContent = p.churn+"%";
+    $("vRamp").textContent  = p.ramp===0 ? "start now" : p.ramp+(p.ramp===1?" month":" months");
+
+    var r = simulate(p);
+    drawChart(r.series);
+
+    if(r.cross){
+      $("crossMonth").textContent = monthLabel(r.cross);
+      $("crossNote").textContent = "Cumulative profit crosses $100,000 in month "+r.cross+".";
+      $("sClients").textContent = Math.round(r.crossData.clients);
+      $("sMRR").textContent = money(r.crossData.mrr);
+      $("sProfitMo").textContent = money(r.crossData.profit)+"/mo";
+    } else {
+      var last = r.series[r.series.length-1];
+      $("crossMonth").textContent = "not within 3 yrs";
+      $("crossNote").textContent = "At these numbers you reach "+money(last.cum)+" cumulative by month 36. Nudge price up or churn down.";
+      $("sClients").textContent = Math.round(last.clients);
+      $("sMRR").textContent = money(last.mrr);
+      $("sProfitMo").textContent = money(last.profit)+"/mo";
+    }
+  }
+
+  ids.forEach(function(i){ el[i].addEventListener("input", render); });
+  render();
+})();
+</script>
+</body>
+</html>
