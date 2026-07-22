@@ -182,7 +182,33 @@ API share one origin and one `npm start`.
 
 ---
 
-## 8. Why this is a strong foundation
+## 8. MCP server (agent interface)
+
+Alongside the HTTP API, Meridian exposes an **MCP server** (`src/mcp/`) over
+stdio so any Model Context Protocol client can drive the engine. It reuses the
+exact same `WorkflowService`, registry, and store in-process — no HTTP hop — so
+an AI agent and a human editing the canvas operate on one shared set of
+workflows.
+
+The tool surface mirrors the service: introspect node types, CRUD workflows,
+validate, run, and read run history. Design choices follow MCP best practice:
+
+- **Comprehensive, composable tools** (not one mega-tool) so an agent can plan:
+  list types → create → validate → run → inspect.
+- **Zod-validated inputs** with rich descriptions and constraints.
+- **Structured output** (`structuredContent`) plus a text rendering, and a
+  `response_format` toggle (markdown/json) on the catalog/list tools.
+- **Behavior annotations** (`readOnlyHint`, `destructiveHint`, `idempotentHint`,
+  `openWorldHint`) so clients can reason about safety.
+- **Actionable errors**: a missing workflow or invalid graph returns the
+  specific issues and the next tool to call, not a bare stack trace.
+- **Response budgeting**: list tools truncate to a character limit and say so.
+
+Because the MCP layer is thin over the service, the engine's guarantees
+(validation-before-run, branching, retries, observability) apply identically
+whether a workflow is triggered by a human, a webhook, a schedule, or an agent.
+
+## 9. Why this is a strong foundation
 
 - **Zero runtime deps** → nothing to break on install; trivially auditable.
 - **Graph-validated before execution** → no run starts on a malformed map.

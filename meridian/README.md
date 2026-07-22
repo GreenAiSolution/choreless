@@ -81,6 +81,60 @@ GET    /api/runs/:id
 POST   /api/hooks/:id            (webhook trigger)
 ```
 
+## MCP server (drive it from an AI agent)
+
+Meridian ships an **MCP (Model Context Protocol) server** so any MCP client —
+Claude Desktop, IDEs, or your own agent — can author, validate, and run business
+automations through tools. It runs the engine **in-process** against the same
+JSON store as the web app, so an agent and a human can collaborate on the same
+workflows.
+
+```bash
+npm run mcp          # start the server on stdio (dev, via tsx)
+# or, after `npm run build`:
+npm run mcp:serve    # node dist/mcp/index.js
+```
+
+### Tools
+
+| Tool | What it does |
+| --- | --- |
+| `meridian_list_node_types` | Catalog of building blocks (call this first when authoring). |
+| `meridian_list_workflows` | List automations. |
+| `meridian_get_workflow` | Read one workflow in full. |
+| `meridian_create_workflow` | Create a workflow from nodes + edges (returns a validation report). |
+| `meridian_update_workflow` | Update a workflow (full graph replacement). |
+| `meridian_delete_workflow` | Delete a workflow (destructive). |
+| `meridian_validate_workflow` | Static validation without running. |
+| `meridian_run_workflow` | Execute a workflow and return per-node results + output. |
+| `meridian_list_runs` | Run history for a workflow. |
+| `meridian_get_run` | One run in full, with per-node input/output/logs. |
+
+Every tool carries a detailed description, a Zod-validated input schema,
+structured output, and behavior annotations (`readOnlyHint`, `destructiveHint`,
+etc.). Errors are actionable — a missing workflow or an invalid graph comes back
+with the specific issues and the next tool to call.
+
+### Claude Desktop config
+
+After `npm run build`, add this to `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "meridian": {
+      "command": "node",
+      "args": ["/absolute/path/to/meridian/dist/mcp/index.js"],
+      "env": { "DATA_DIR": "/absolute/path/to/meridian/data" }
+    }
+  }
+}
+```
+
+Then ask the agent: *"List Meridian's node types, then build an automation that
+auto-approves refunds under $50 and escalates the rest, and run it on a $120
+refund."* It will compose the tools to author and execute the workflow.
+
 ## Project layout
 
 ```
@@ -90,6 +144,7 @@ meridian/
 │   ├── engine/      execution engine, expressions, node registry + builtins
 │   ├── store/       Store interface + JSON file store
 │   ├── api/         node:http router, server, static serving
+│   ├── mcp/         MCP server: tools, schemas, formatting (stdio)
 │   ├── triggers/    schedule scheduler
 │   ├── service.ts   application service
 │   └── app.ts       composition root
