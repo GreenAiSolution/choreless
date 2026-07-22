@@ -1,11 +1,16 @@
-# WhatsApp AI Chatbot — Text / Voice / PDF / Image (RAG + Memory)
+# Omniagent Engine — WhatsApp AI Agents (RAG + Memory + Gated Actions)
 
-An importable **n8n** workflow that turns a WhatsApp Business number into a smart,
-context-aware assistant. It understands **text, voice notes, images, PDFs and
-spreadsheets**, answers with **RAG over MongoDB Atlas Vector Search**, remembers the
-conversation, and replies back on WhatsApp — end to end.
+The engine behind [Omniagent](../README.md): importable **n8n** workflows that turn a
+WhatsApp Business number into a smart, context-aware **agent**. It understands **text,
+voice notes, images, PDFs and spreadsheets**, answers with **RAG over MongoDB Atlas
+Vector Search**, remembers the conversation, takes **real actions in real tools** (with
+money-moving writes gated behind a typed `CONFIRM`), and replies back on WhatsApp —
+end to end.
 
-> Faithful rebuild of the reference blueprint: **n8n + OpenAI + WhatsApp Cloud API + MongoDB Atlas**.
+Every agent in the catalog shares one identical multimodal front-end; only the persona
+and tools change, so a new agent is configuration, not a rebuild.
+
+> Stack: **n8n + OpenAI + WhatsApp Cloud API + MongoDB Atlas**.
 
 ```
 WhatsApp Trigger ─▶ Route Types ─┬─ Text ───────────────────────────────▶ Map text prompt ─────────┐
@@ -26,16 +31,18 @@ WhatsApp Trigger ─▶ Route Types ─┬─ Text ─────────�
 
 | File | What it is |
 | --- | --- |
-| `workflow.json` | The base chatbot workflow — general assistant. Import this into n8n. |
-| `workflow-quickbooks-specialist.json` | **QuickBooks specialist** — same pipeline + live QuickBooks Online query & report tools. |
-| `workflow-customer-support.json` | **Customer support agent** for any business — RAG + escalation/ticket tool. |
+| `workflow.json` | **Concierge** — the base agent (general multimodal assistant). Import this into n8n. |
+| `workflow-quickbooks-specialist.json` | **Bookkeeper Agent** — same pipeline + live QuickBooks Online query/report tools + gated invoice/payment writes. |
+| `workflow-customer-support.json` | **Support Agent** for any business — RAG + escalation/ticket tool. |
+| `workflow-reservations.json` | **Reservations Agent** — availability check + gated booking / reschedule / cancel tools. |
+| `workflow-sales-qualifier.json` | **Sales Qualifier** — RAG + lead capture (CRM) + meeting-booking tools. |
 | `ingest-knowledge-base.json` | Companion workflow to load PDFs/docs into the vector store (RAG is empty until you run this). |
-| `build-variants.mjs` | Regenerates the two specialized workflows from `workflow.json` (persona + tools only differ). |
+| `build-variants.mjs` | Regenerates the four specialized agents from `workflow.json` (persona + tools only differ). |
 
-All three chatbot workflows share the **identical multimodal front-end** (WhatsApp trigger →
+All five agents share the **identical multimodal front-end** (WhatsApp trigger →
 type routing → voice/image/document handling → unified prompt → agent → reply). Only the
 **agent's system prompt and tools** change. Edit `workflow.json` and run `node build-variants.mjs`
-to propagate pipeline changes to both specialists.
+to propagate pipeline changes to every specialist.
 
 ## "Huge context on anything"
 
@@ -67,7 +74,7 @@ Under **Credentials → New**, create:
    nodes use this to fetch the media binary from Meta's CDN.
 
 ### 3. Prepare MongoDB Atlas Vector Search
-1. Create a database (e.g. `choreless`) and a collection named **`knowledge_base`**.
+1. Create a database (e.g. `omniagent`) and a collection named **`knowledge_base`**.
 2. In **Atlas → Search → Create Search Index → JSON editor**, create a **Vector Search** index named **`vector_index`** on that collection:
    ```json
    {
@@ -124,13 +131,13 @@ Message your WhatsApp number:
 
 ---
 
-## The two specialists
+## The specialist agents
 
-Both import and set up **exactly like the base workflow** (steps 1–7 above) — same
+All four import and set up **exactly like the base workflow** (steps 1–7 above) — same
 WhatsApp, OpenAI, MongoDB and Header-Auth credentials. Replace **`YOUR BUSINESS`** in the
 agent's system message with your company name.
 
-### QuickBooks Specialist — `workflow-quickbooks-specialist.json`
+### Bookkeeper Agent — `workflow-quickbooks-specialist.json`
 A live bookkeeping assistant. On top of RAG it gets two QuickBooks Online tools the agent
 calls on demand:
 
@@ -161,7 +168,7 @@ calls on demand:
    credential and realm id. Test in the Intuit **sandbox** first. Remove both nodes if you
    want a strictly read-only bot.
 
-### Customer Support Agent — `workflow-customer-support.json`
+### Support Agent — `workflow-customer-support.json`
 A business-agnostic front-line agent. RAG-grounded, cites sources, and escalates cleanly:
 
 - **`create_support_ticket`** — the agent calls this to log/escalate an issue (summary,
@@ -173,6 +180,36 @@ A business-agnostic front-line agent. RAG-grounded, cites sources, and escalates
    a Zendesk/Freshdesk/HubSpot webhook, a Slack incoming webhook, an n8n webhook that opens
    a ticket, or a Google Sheet append. Adjust the JSON body to match your system's fields.
 3. If you don't want escalation yet, just delete that node — the agent still answers from RAG.
+
+### Reservations Agent — `workflow-reservations.json`
+A bookings concierge for restaurants, salons, clinics and tours. It checks real
+availability before promising a slot, then books, reschedules or cancels — each
+write **gated by the CONFIRM protocol** (summarize the exact booking, act only after
+the user types `CONFIRM`).
+
+- **`check_availability`** — GET open slots for a date / party size / service.
+- **`create_booking` / `reschedule_booking` / `cancel_booking`** — gated writes that
+  POST to your booking system with a required `userConfirmation` field.
+
+**Extra setup:**
+1. Point **`YOUR_AVAILABILITY_WEBHOOK_URL`** at an endpoint that returns open times
+   (your reservation system's API, or an n8n webhook that queries it).
+2. Point **`YOUR_BOOKING_WEBHOOK_URL`** at an endpoint that creates/updates bookings;
+   it receives an `action` field (`create` | `reschedule` | `cancel`) plus the details.
+3. Remove the write nodes for an availability-only bot.
+
+### Sales Qualifier — `workflow-sales-qualifier.json`
+An inbound SDR. It answers product/pricing questions from RAG, qualifies the lead
+naturally (need, budget, timeline, role), then logs it to the CRM and/or books a demo.
+
+- **`capture_lead`** — POST a scored lead (`cold`/`warm`/`hot`) + qualification summary to your CRM.
+- **`book_meeting`** — POST a requested time to your scheduling endpoint.
+
+**Extra setup:**
+1. Load your product info, pricing and FAQs via `ingest-knowledge-base.json`.
+2. Set **`YOUR_CRM_WEBHOOK_URL`** (HubSpot/Salesforce/Pipedrive webhook, or a Sheet append)
+   and **`YOUR_SCHEDULING_WEBHOOK_URL`** (Calendly/Cal.com/Google Calendar via n8n).
+3. Delete either tool node to run capture-only or booking-only.
 
 ---
 
