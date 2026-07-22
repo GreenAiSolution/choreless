@@ -12,6 +12,7 @@ A chore-outsourcing platform demo — "Work delivered, not chatted. Every task Q
 | `CHORELESS-architecture.md` | System architecture |
 | `CHORELESS-operations-playbook.md` | Operations playbook |
 | `CHORELESS-financial-model.xlsx` | Financial model |
+| `whatsapp-ai-chatbot/` | Importable **n8n** WhatsApp AI chatbot — text/voice/PDF/image with RAG (MongoDB Atlas) + memory. See its [README](whatsapp-ai-chatbot/README.md). |
 
 ## Editing & building
 
