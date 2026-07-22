@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Meridian — Automation Map</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%97%BA%EF%B8%8F%3C/text%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo">◇</span>
+        <span>Meridian</span>
+        <span class="tag">automation map</span>
+      </div>
+      <div class="wf-controls">
+        <select id="wf-select" title="Open workflow"></select>
+        <input id="wf-name" placeholder="Workflow name" />
+        <button id="btn-new" class="ghost">New</button>
+        <button id="btn-save">Save</button>
+        <button id="btn-validate" class="ghost">Validate</button>
+        <button id="btn-run" class="primary">▶ Run</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="palette" id="palette">
+        <h2>Nodes</h2>
+        <p class="hint">Click to add to the canvas.</p>
+        <div id="palette-list"></div>
+      </aside>
+
+      <section class="canvas-wrap" id="canvas-wrap">
+        <svg id="edges" class="edges"></svg>
+        <div id="canvas" class="canvas"></div>
+        <div class="canvas-empty" id="canvas-empty">
+          <p>Drop a <b>Trigger</b> and wire it to actions.</p>
+          <p class="sub">The map you draw <i>is</i> the automation.</p>
+        </div>
+      </section>
+
+      <aside class="inspector" id="inspector">
+        <div id="inspector-empty" class="inspector-empty">
+          Select a node to edit it.
+        </div>
+        <div id="inspector-body" hidden></div>
+      </aside>
+    </main>
+
+    <section class="runbar" id="runbar">
+      <div class="runbar-head">
+        <strong>Run log</strong>
+        <span id="run-status" class="run-status"></span>
+        <button id="btn-clear-log" class="ghost small">Clear</button>
+      </div>
+      <div id="run-log" class="run-log"></div>
+    </section>
+
+    <div id="toast" class="toast" hidden></div>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
