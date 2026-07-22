@@ -12,7 +12,7 @@
     {
       "parameters": {
         "formTitle": "Add to Knowledge Base",
-        "formDescription": "Upload a PDF, DOCX, TXT or spreadsheet to embed into the Choreless knowledge base.",
+        "formDescription": "Upload a PDF, DOCX, TXT or spreadsheet to embed into your knowledge base.",
         "formFields": {
           "values": [
             { "fieldLabel": "File", "fieldType": "file", "requiredField": true },
