@@ -7,15 +7,15 @@
   -->
   <qa_pair>
     <question>Using the Meridian MCP server, how many distinct node types are available in the catalog?</question>
-    <answer>10</answer>
+    <answer>14</answer>
   </qa_pair>
   <qa_pair>
     <question>In the Meridian node-type catalog, what category does the 'http.request' node type belong to?</question>
     <answer>Integrations</answer>
   </qa_pair>
   <qa_pair>
-    <question>In Meridian, which single node type has exactly two output ports named 'out' and 'error'?</question>
-    <answer>http.request</answer>
+    <question>In the Meridian catalog, which node type belongs to the 'AI' category?</question>
+    <answer>llm.complete</answer>
   </qa_pair>
   <qa_pair>
     <question>In Meridian, the 'condition' node has two output ports. Which port does it emit on when its boolean expression evaluates to truthy?</question>

@@ -60,11 +60,16 @@ has a registered **type** that defines its input/output ports and its
 
 ## Node types
 
-`trigger` · `manual.input` · `transform` · `condition` · `template` · `log` ·
-`delay` · `merge` · `set.variable` · `http.request`
+**Core:** `trigger` · `manual.input` · `transform` · `condition` · `template` ·
+`log` · `delay` · `merge` · `set.variable` · `http.request`
+
+**Integrations (act on the world):** `webhook.send` · `slack.message` ·
+`email.send` (Resend) · `llm.complete` (Anthropic — puts AI in the loop)
 
 Each self-describes its ports and config fields, so the front-end palette is
-generated, never hard-coded.
+generated, never hard-coded. Integration nodes read secrets from config or the
+environment (`SLACK_WEBHOOK_URL`, `RESEND_API_KEY`, `ANTHROPIC_API_KEY`) and
+route success to `out` / failure to `error`, so a flow can branch on outcome.
 
 ## API
 
@@ -90,10 +95,19 @@ JSON store as the web app, so an agent and a human can collaborate on the same
 workflows.
 
 ```bash
-npm run mcp          # start the server on stdio (dev, via tsx)
+npm run mcp          # stdio transport (dev, via tsx) — for local clients
+npm run mcp:http     # Streamable HTTP transport on :8788 — for remote clients
 # or, after `npm run build`:
-npm run mcp:serve    # node dist/mcp/index.js
+npm run mcp:serve        # node dist/mcp/index.js       (stdio)
+npm run mcp:http:serve   # node dist/mcp/http-index.js  (HTTP)
+
+npm run eval         # drive the server and check evaluations/mcp_eval.xml (10/10)
 ```
+
+**Transports.** `stdio` is for locally-spawned clients (Claude Desktop). The
+**Streamable HTTP** transport runs stateless (no server sessions) and exposes
+`POST /mcp` plus a `GET /health`, so you can host it and point remote clients at
+`http://host:8788/mcp`.
 
 ### Tools
 

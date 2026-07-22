@@ -15,9 +15,12 @@
     "start": "tsx src/index.ts",
     "mcp": "tsx src/mcp/index.ts",
     "mcp:serve": "node dist/mcp/index.js",
+    "mcp:http": "tsx src/mcp/http-index.ts",
+    "mcp:http:serve": "node dist/mcp/http-index.js",
     "build": "tsc -p tsconfig.build.json",
     "serve": "node dist/index.js",
     "test": "tsx --test test/*.test.ts",
+    "eval": "node evaluations/run-eval.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {

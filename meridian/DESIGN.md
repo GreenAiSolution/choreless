@@ -127,8 +127,15 @@ graph the single source of truth.
 | `merge` | `a`,`b` → `out` | Combine two branches into one object. |
 | `template` | `in` → `out` | Render a string template. |
 | `set.variable` | `in` → `out` | Compute a named value for downstream use. |
+| `webhook.send` | `in` → `out` / `error` | POST a JSON payload to any URL. |
+| `slack.message` | `in` → `out` / `error` | Post to a Slack Incoming Webhook. |
+| `email.send` | `in` → `out` / `error` | Send email via the Resend API. |
+| `llm.complete` | `in` → `out` / `error` | Call an Anthropic model (AI in the loop). |
 
-Every type is registered in `src/engine/nodes/` and self-describes its ports,
+Integration nodes act on the world via `fetch`, read secrets from config or the
+environment, and split success/failure across `out` and `error` ports so flows
+can branch on outcome. Every type is registered in `src/engine/nodes/` and
+self-describes its ports,
 config schema, and defaults — the API exposes this catalog so the UI palette is
 generated, never hard-coded.
 
