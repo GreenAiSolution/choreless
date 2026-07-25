@@ -39,8 +39,15 @@ WhatsApp Trigger ─▶ Route Types ─┬─ Text ─────────�
 | `workflow-night-auditor.json` | **Night Auditor** — cron 06:45: pulls the day's bookings/finance/thread reports, composes a grounded one-page morning brief, sends it to the owner's WhatsApp. |
 | `workflow-chaser.json` | **The Chaser** — cron 09:00: escalating follow-ups (day 3/7/14/21) on silent quotes & invoices, stops on reply, logs every nudge; Monday 08:00 recovered-revenue report. |
 | `workflow-reputation-loop.json` | **Reputation Loop** — webhook on job completion + 1-day wait: personal "how was it?" ask. Replies are handled by the Support Agent's feedback protocol (review link for happy, `reputation-intercept` ticket for unhappy). |
+| `workflow-order-tracker.json` | **Order Tracker** — "where's my order?" answered from live carrier/order status via a `track_order` tool; policies from RAG. |
+| `workflow-quote-builder.json` | **Quote Builder** — turns a messy job description into an itemized quote priced only from the rate card in RAG; sending is **CONFIRM-gated**. |
+| `workflow-reminder.json` | **The Reminder** — daily 16:00: tomorrow's appointments get a personal nudge ("R to reschedule, C to confirm") — no-shows cut before they happen. |
+| `workflow-winback.json` | **The Winback** — Tuesdays 10:00: customers quiet for 60 days get one personal, non-salesy check-in; skips anyone nudged this month. |
 | `ingest-knowledge-base.json` | Companion workflow to load PDFs/docs into the vector store (RAG is empty until you run this). |
 | `build-variants.mjs` | Regenerates the four specialized agents from `workflow.json` (persona + tools only differ). |
+
+> These fifteen workflows are packaged and sold as **the assemblies** —
+> see [`../assemblies/`](../assemblies/) (private; never shipped to the public repo).
 | `workflow-voice-agent.json` | **Voice Agent** *(in build)* — answers phone calls on the same grounded/gated core, spoken instead of typed. |
 | `workflow-rcs-channel.json` | **RCS Channel** *(in build)* — the Concierge core over RCS Business Messaging instead of WhatsApp. |
 | `workflow-checkout.json` | **Concierge Checkout** *(in build)* — takes payment via a Stripe Payment Link, gated by the same CONFIRM protocol as a booking. |

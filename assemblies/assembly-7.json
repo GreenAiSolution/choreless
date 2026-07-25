@@ -1,0 +1,19 @@
+{
+  "assembly": "VII",
+  "name": "Assembly of Seven",
+  "tagline": "The whole floor, day and night.",
+  "for": "A busy business where messages arrive faster than people can answer, and the follow-ups are already slipping.",
+  "monthly": 899,
+  "buildFee": 1800,
+  "bots": [
+    { "file": "workflow.json",                    "role": "Concierge",       "why": "The always-on first responder." },
+    { "file": "workflow-customer-support.json",   "role": "Support",         "why": "Front-line tickets, photos read, policy checked." },
+    { "file": "workflow-reservations.json",       "role": "Reservations",    "why": "Bookings, reschedules, cancellations — CONFIRM-gated." },
+    { "file": "workflow-sales-qualifier.json",    "role": "Sales Qualifier", "why": "Every lead greeted in seconds, scored into the CRM." },
+    { "file": "workflow-night-auditor.json",      "role": "Night Auditor",   "why": "The day reconciled at 02:00, morning brief at 07:00." },
+    { "file": "workflow-chaser.json",             "role": "The Chaser",      "why": "Silent quotes and invoices chased on a ladder — day 3, 7, 14, 21." },
+    { "file": "workflow-reputation-loop.json",    "role": "Reputation Loop", "why": "The rating compounds on autopilot." }
+  ],
+  "sharedInfra": ["ingest-knowledge-base.json"],
+  "notes": "Bookkeeper (QuickBooks) can replace any agent seat at no charge for businesses that live in their books. The full night shift is included — this is the tier where the business runs while nobody's watching."
+}

@@ -1,0 +1,27 @@
+{
+  "assembly": "XV",
+  "name": "Assembly of Fifteen",
+  "tagline": "The machine. Every seat filled.",
+  "for": "An operation that never stops — multi-channel volume, quotes, orders, no-shows, lapsed customers, and money moving, all at once.",
+  "monthly": 1299,
+  "buildFee": 3500,
+  "bots": [
+    { "file": "workflow.json",                        "role": "Concierge",         "why": "The always-on first responder." },
+    { "file": "workflow-customer-support.json",       "role": "Support",           "why": "Front-line tickets, photos read, policy checked." },
+    { "file": "workflow-reservations.json",           "role": "Reservations",      "why": "Bookings held behind CONFIRM." },
+    { "file": "workflow-sales-qualifier.json",        "role": "Sales Qualifier",   "why": "Leads scored into the CRM in seconds." },
+    { "file": "workflow-quickbooks-specialist.json",  "role": "Bookkeeper",        "why": "Live books read on demand, writes gated." },
+    { "file": "workflow-order-tracker.json",          "role": "Order Tracker",     "why": "\"Where's my order?\" answered from the real carrier status." },
+    { "file": "workflow-quote-builder.json",          "role": "Quote Builder",     "why": "Messy job descriptions turned into itemized quotes, sent on CONFIRM." },
+    { "file": "workflow-night-auditor.json",          "role": "Night Auditor",     "why": "The day reconciled at 02:00." },
+    { "file": "workflow-chaser.json",                 "role": "The Chaser",        "why": "Silent money chased on a ladder." },
+    { "file": "workflow-reputation-loop.json",        "role": "Reputation Loop",   "why": "The rating compounds on autopilot." },
+    { "file": "workflow-reminder.json",               "role": "The Reminder",      "why": "Tomorrow's appointments nudged at 16:00 — no-shows cut before they happen." },
+    { "file": "workflow-winback.json",                "role": "The Winback",       "why": "Customers gone quiet for 60 days get one personal, non-salesy check-in." },
+    { "file": "workflow-voice-agent.json",            "role": "Voice Agent",       "why": "The phone answered on the same grounded core — spoken CONFIRM.", "requires": "Twilio Voice number" },
+    { "file": "workflow-rcs-channel.json",            "role": "RCS Channel",       "why": "The same brain on RCS for the customers who aren't on WhatsApp.", "requires": "RCS-capable BSP (Infobip/Twilio)" },
+    { "file": "workflow-checkout.json",               "role": "Concierge Checkout","why": "Payment links issued only after a typed CONFIRM; both sides notified on payment.", "requires": "Stripe account" }
+  ],
+  "sharedInfra": ["ingest-knowledge-base.json"],
+  "notes": "The three channel bots (Voice, RCS, Checkout) activate when the customer's Twilio / BSP / Stripe accounts are connected during onboarding — disclose this in the close. Everything else runs on the WhatsApp number alone."
+}

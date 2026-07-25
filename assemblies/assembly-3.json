@@ -1,0 +1,15 @@
+{
+  "assembly": "III",
+  "name": "Assembly of Three",
+  "tagline": "The counter, covered.",
+  "for": "A single-location business that needs answering, booking, and a rating that climbs — nothing else.",
+  "monthly": 399,
+  "buildFee": 900,
+  "bots": [
+    { "file": "workflow.json",                    "role": "Concierge",       "why": "Someone always answers — grounded, cited, escalates cleanly." },
+    { "file": "workflow-reservations.json",       "role": "Reservations",    "why": "Real availability checked, bookings held behind CONFIRM.", "swappable": ["workflow-customer-support.json", "workflow-sales-qualifier.json", "workflow-order-tracker.json"] },
+    { "file": "workflow-reputation-loop.json",    "role": "Reputation Loop", "why": "Every visit asked about; unhappy customers intercepted privately." }
+  ],
+  "sharedInfra": ["ingest-knowledge-base.json"],
+  "notes": "The specialist seat is swappable at onboarding — Support, Sales Qualifier or Order Tracker instead of Reservations, whatever the business actually loses money on."
+}

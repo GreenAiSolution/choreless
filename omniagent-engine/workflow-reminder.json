@@ -1,0 +1,228 @@
+{
+  "name": "Omniagent \u2014 The Reminder",
+  "nodes": [
+    {
+      "id": "rm-0001",
+      "name": "Every Day 16:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 16 * * *"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "rm-0002",
+      "name": "Fetch Tomorrow's Appointments",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        420,
+        300
+      ],
+      "parameters": {
+        "url": "YOUR_APPOINTMENTS_WEBHOOK_URL",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "window",
+              "value": "tomorrow"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "rm-0003",
+      "name": "One Item Per Appointment",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        640,
+        300
+      ],
+      "parameters": {
+        "fieldToSplitOut": "appointments",
+        "options": {}
+      }
+    },
+    {
+      "id": "rm-0004",
+      "name": "Compose Reminder",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        860,
+        300
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "=Appointment: {{ JSON.stringify($json) }}",
+        "options": {
+          "maxIterations": 5,
+          "systemMessage": "You write ONE short WhatsApp appointment reminder for YOUR BUSINESS.\n\nRules:\n1. Warm, personal, two sentences max: what the appointment is, and when (day + time).\n2. End with exactly: \"Reply R to reschedule, or C to confirm you're coming.\"\n3. Use only the appointment data given. No emojis, no invented details, no offers.\n4. Output the message text alone \u2014 nothing else."
+        }
+      }
+    },
+    {
+      "id": "rm-0005",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        860,
+        520
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {
+          "maxTokens": -1,
+          "temperature": 0.4
+        }
+      }
+    },
+    {
+      "id": "rm-0006",
+      "name": "Send Reminder",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        300
+      ],
+      "parameters": {
+        "operation": "send",
+        "messageType": "text",
+        "phoneNumberId": "YOUR_PHONE_NUMBER_ID",
+        "recipientPhoneNumber": "={{ $('One Item Per Appointment').item.json.phone }}",
+        "textBody": "={{ $json.output }}",
+        "additionalFields": {}
+      }
+    },
+    {
+      "id": "rm-0007",
+      "name": "Log Nudge",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1320,
+        300
+      ],
+      "parameters": {
+        "url": "YOUR_REMINDER_LOG_WEBHOOK_URL",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"appointmentId\": \"{{ $('One Item Per Appointment').item.json.id }}\",\n  \"phone\": \"{{ $('One Item Per Appointment').item.json.phone }}\",\n  \"sentAt\": \"{{ $now.toISO() }}\"\n}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Every Day 16:00": {
+      "main": [
+        [
+          {
+            "node": "Fetch Tomorrow's Appointments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Tomorrow's Appointments": {
+      "main": [
+        [
+          {
+            "node": "One Item Per Appointment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "One Item Per Appointment": {
+      "main": [
+        [
+          {
+            "node": "Compose Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compose Reminder": {
+      "main": [
+        [
+          {
+            "node": "Send Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Compose Reminder",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Reminder": {
+      "main": [
+        [
+          {
+            "node": "Log Nudge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": [
+    {
+      "name": "whatsapp"
+    },
+    {
+      "name": "night-shift"
+    },
+    {
+      "name": "cron"
+    },
+    {
+      "name": "assembly"
+    }
+  ]
+}
