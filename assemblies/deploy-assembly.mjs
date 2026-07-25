@@ -118,6 +118,49 @@ lines.push('- [ ] Smoke test: cited answer, refusal, CONFIRM gate, memory follow
 lines.push('- [ ] Verify zero cross-tenant leakage in vector search before activation');
 writeFileSync(join(outDir, 'DEPLOY.md'), lines.join('\n') + '\n');
 
+// customer-facing welcome kit — send this (as PDF or paper) when the smoke test passes
+const w = [];
+w.push(`# Welcome to your ${manifest.name}`);
+w.push('');
+w.push(`**${business}** — your crew is live. This page is everything you need to know,`);
+w.push('and it fits on one sheet on purpose.');
+w.push('');
+w.push('## Your staff');
+w.push('');
+for (const bot of manifest.bots) {
+  const file = swaps[bot.file] || bot.file;
+  if (swaps[bot.file]) {
+    w.push(`- **${bot.role} seat** — filled at your request by a different specialist (${file.replace('workflow-', '').replace('.json', '')}).`);
+  } else {
+    w.push(`- **${bot.role}** — ${bot.why}${bot.requires ? ` *(activates once your ${bot.requires} is connected)*` : ''}`);
+  }
+}
+w.push('');
+w.push('## How to work with it');
+w.push('');
+w.push('- **Just message your number.** Text, voice notes, photos, PDFs — customers');
+w.push('  (and you) talk to it like a person. Nothing to install.');
+w.push('- **It only says what it knows.** Every factual answer comes from the documents');
+w.push('  you gave us, with the source cited. If it doesn\'t know, it says so and brings');
+w.push('  in a human — it does not guess.');
+w.push('- **Nothing irreversible happens without you.** Money, bookings, quotes: the');
+w.push('  agent proposes the exact action and waits for a typed **CONFIRM**. No CONFIRM,');
+w.push('  no action. Every time.');
+w.push('- **Updating its knowledge:** send us new menus, prices or policies any time —');
+w.push('  they\'re loaded as part of your plan\'s knowledge refresh.');
+w.push('');
+w.push('## Your data');
+w.push('');
+w.push('Your knowledge base and conversations are isolated to your business alone.');
+w.push('Nothing trains on them. Cancel and they\'re deleted, not archived.');
+w.push('');
+w.push('## When something looks wrong');
+w.push('');
+w.push('Reply to any message from us, or write **hello@omniagent.ai** with the word');
+w.push('URGENT in the subject. A human reads it. That\'s the whole process.');
+writeFileSync(join(outDir, 'WELCOME.md'), w.join('\n') + '\n');
+
 console.log(`${manifest.name} assembled for "${business}"`);
 console.log(`  ${deployed.length} workflows -> assemblies/out/${slug}/`);
 console.log(`  wiring checklist -> assemblies/out/${slug}/DEPLOY.md`);
+console.log(`  customer welcome kit -> assemblies/out/${slug}/WELCOME.md`);
