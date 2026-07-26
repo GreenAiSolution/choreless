@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireAdmin } from "@/lib/tenancy";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
@@ -44,7 +45,9 @@ export default async function AdminRequestsPage() {
             <Card key={r.id} className="flex items-start justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-medium">{r.title}</span>
+                  <Link href={`/admin/requests/${r.id}`} className="font-medium hover:text-cyan">
+                    {r.title}
+                  </Link>
                   <Badge variant={r.status === "DELIVERED" ? "success" : r.status === "IN_PROGRESS" ? "warning" : "default"}>
                     {r.status.replace("_", " ")}
                   </Badge>
@@ -53,6 +56,9 @@ export default async function AdminRequestsPage() {
                   {r.client.businessName} · {r.kind.replace("_", " ")} · {r.createdAt.toISOString().slice(0, 10)}
                 </div>
                 <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{r.body}</p>
+                <Link href={`/admin/requests/${r.id}`} className="mt-2 inline-block text-xs text-cyan hover:underline">
+                  Open thread →
+                </Link>
               </div>
               {next && (
                 <form action={advance}>

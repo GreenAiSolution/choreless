@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireClient } from "@/lib/tenancy";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
@@ -80,17 +81,20 @@ export default async function RequestsPage() {
           <Card className="text-sm text-muted-foreground">No requests yet.</Card>
         )}
         {requests.map((r) => (
-          <Card key={r.id} className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-medium">{r.title}</span>
-                <Badge variant={STATUS_VARIANT[r.status]}>{r.status.replace("_", " ")}</Badge>
+          <Link key={r.id} href={`/app/requests/${r.id}`} className="block">
+            <Card className="flex items-center justify-between transition-colors hover:border-cyan/50">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-medium">{r.title}</span>
+                  <Badge variant={STATUS_VARIANT[r.status]}>{r.status.replace("_", " ")}</Badge>
+                </div>
+                <div className="mt-1 font-mono text-xs text-muted-foreground">
+                  {r.kind.replace("_", " ")} · {r._count.comments} comment{r._count.comments === 1 ? "" : "s"} · {r.createdAt.toISOString().slice(0, 10)}
+                </div>
               </div>
-              <div className="mt-1 font-mono text-xs text-muted-foreground">
-                {r.kind.replace("_", " ")} · {r._count.comments} comment{r._count.comments === 1 ? "" : "s"} · {r.createdAt.toISOString().slice(0, 10)}
-              </div>
-            </div>
-          </Card>
+              <span className="text-xs text-muted-foreground">Open thread →</span>
+            </Card>
+          </Link>
         ))}
       </div>
     </div>

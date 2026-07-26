@@ -1,5 +1,14 @@
 import Link from "next/link";
-import { ArrowRight, Radio, Gauge, ShieldCheck, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  Radio,
+  Gauge,
+  ShieldCheck,
+  Sparkles,
+  CalendarCheck,
+  SlidersHorizontal,
+  Rocket,
+} from "lucide-react";
 import { AGENTS } from "@/lib/agents";
 import { PRODUCT_LINES } from "@/lib/catalog";
 import { RobotAvatar } from "@/components/robot-avatar";
@@ -8,6 +17,11 @@ import { LeadForm } from "@/components/marketing/lead-form";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
+/**
+ * Marketing landing — "vibe dining" for growth. The energy of the hottest
+ * table in town, run with cockpit discipline. Fully static, no client bloat
+ * beyond the pricing + lead-form islands.
+ */
 export default function MarketingHome() {
   return (
     <div className="relative">
@@ -21,40 +35,41 @@ export default function MarketingHome() {
             NEXUS<span className="text-gradient">GROWTH</span>
           </Link>
           <nav className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
-            <a href="#agents" className="hover:text-foreground">Agents</a>
+            <a href="#agents" className="hover:text-foreground">The Crew</a>
             <a href="#lines" className="hover:text-foreground">Product Lines</a>
-            <a href="#pricing" className="hover:text-foreground">Pricing</a>
+            <a href="#pricing" className="hover:text-foreground">The Menu</a>
+            <a href="#faq" className="hover:text-foreground">FAQ</a>
           </nav>
           <div className="flex items-center gap-2">
             <Button asChild variant="ghost" size="sm">
               <Link href="/login">Sign in</Link>
             </Button>
             <Button asChild size="sm">
-              <Link href="/login">Launch console</Link>
+              <Link href="/login">Reserve your cockpit</Link>
             </Button>
           </div>
         </div>
       </header>
 
       {/* Hero */}
-      <section className="container relative py-24 text-center">
+      <section className="container relative py-24 text-center md:py-32">
         <div className="mx-auto max-w-3xl">
-          <Badge className="mx-auto">Growth, on autopilot</Badge>
-          <h1 className="mt-6 font-heading text-5xl font-bold leading-[1.05] md:text-6xl">
-            Deploy an <span className="text-gradient">AI growth crew</span> and managed ad-ops from one cockpit.
+          <Badge className="mx-auto animate-pulse-glow">Now seating — limited client roster</Badge>
+          <h1 className="mt-6 font-heading text-5xl font-bold leading-[1.02] md:text-7xl">
+            The <span className="text-gradient">velvet rope</span> of growth operations.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            Five specialist AI agents qualify leads, write ads, follow up, and update your CRM —
-            while our ad-operations team runs the spend. Self-serve. Real-time. Relentless.
+            Five specialist AI agents on call around the clock. A human ad-ops crew behind the
+            glass. One cockpit that makes your competitors ask for the recipe.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
             <Button asChild size="lg">
               <Link href="/login">
-                Start free <ArrowRight className="h-4 w-4" />
+                Reserve your cockpit <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <a href="#pricing">See pricing</a>
+              <a href="#pricing">See the menu</a>
             </Button>
           </div>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 font-mono text-xs uppercase tracking-widest text-muted-foreground">
@@ -65,13 +80,29 @@ export default function MarketingHome() {
         </div>
       </section>
 
+      {/* Ticker strip */}
+      <div className="border-y border-border/60 bg-card/40 py-3">
+        <div className="container flex flex-wrap items-center justify-center gap-x-10 gap-y-2 font-mono text-[0.65rem] uppercase tracking-[0.25em] text-muted-foreground">
+          <span>Leads qualified in seconds</span>
+          <span className="text-cyan">◆</span>
+          <span>Ad copy on demand</span>
+          <span className="text-violet">◆</span>
+          <span>Follow-ups that never sleep</span>
+          <span className="text-magenta">◆</span>
+          <span>Spend watched daily</span>
+        </div>
+      </div>
+
       {/* Agent roster */}
       <section id="agents" className="container py-20">
         <div className="mb-12 text-center">
           <Badge variant="magenta">The Crew</Badge>
-          <h2 className="mt-3 font-heading text-3xl font-bold">Meet your agents</h2>
+          <h2 className="mt-3 font-heading text-3xl font-bold md:text-4xl">
+            Five specialists. Zero excuses.
+          </h2>
           <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
-            Each agent is a distinct specialist with its own persona, tools, and system prompt.
+            Each agent is a distinct character with its own persona, tools, and system prompt —
+            tuned to your saved brand voice.
           </p>
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
@@ -92,37 +123,82 @@ export default function MarketingHome() {
 
       {/* Product lines */}
       <section id="lines" className="container py-20">
+        <div className="mb-12 text-center">
+          <Badge>Two ways to sit down</Badge>
+          <h2 className="mt-3 font-heading text-3xl font-bold md:text-4xl">Pick a line. Or take both.</h2>
+        </div>
         <div className="grid gap-6 md:grid-cols-2">
-          <div className="hud-panel p-8">
+          <div className="hud-panel hud-corners p-8">
             <Sparkles className="h-8 w-8 text-cyan" />
             <h3 className="mt-4 font-heading text-2xl font-bold">{PRODUCT_LINES.AI_AGENTS.name}</h3>
             <p className="mt-2 text-muted-foreground">{PRODUCT_LINES.AI_AGENTS.blurb}</p>
             <ul className="mt-5 space-y-2 text-sm text-muted-foreground">
-              <li>› Chat with each agent in real time</li>
+              <li>› Chat with each agent in real time — streamed, persisted</li>
               <li>› Custom instructions + saved brand voice</li>
               <li>› Usage metering with graceful limits</li>
             </ul>
           </div>
-          <div className="hud-panel p-8">
+          <div className="hud-panel hud-corners p-8">
             <Gauge className="h-8 w-8 text-violet" />
             <h3 className="mt-4 font-heading text-2xl font-bold">{PRODUCT_LINES.AD_OPS.name}</h3>
             <p className="mt-2 text-muted-foreground">{PRODUCT_LINES.AD_OPS.blurb}</p>
             <ul className="mt-5 space-y-2 text-sm text-muted-foreground">
-              <li>› Spend, CPL, and ROAS dashboards</li>
-              <li>› Creative rotation + campaign management</li>
+              <li>› Spend, CPL, and ROAS dashboards — live, filterable</li>
+              <li>› Creative rotation + campaign management by humans</li>
               <li>› Monthly AI-written executive reports</li>
             </ul>
           </div>
         </div>
       </section>
 
+      {/* How it works */}
+      <section className="container py-20">
+        <div className="mb-12 text-center">
+          <Badge variant="violet">The experience</Badge>
+          <h2 className="mt-3 font-heading text-3xl font-bold md:text-4xl">From reservation to feast</h2>
+        </div>
+        <div className="grid gap-6 md:grid-cols-3">
+          {[
+            {
+              icon: CalendarCheck,
+              step: "01 — Reserve",
+              title: "Choose your seats",
+              body: "Pick a tier on either line — or both. Checkout takes two minutes; your cockpit is live immediately.",
+            },
+            {
+              icon: SlidersHorizontal,
+              step: "02 — Calibrate",
+              title: "We learn your voice",
+              body: "A five-minute onboarding captures your business, platforms, goals, and brand voice. Every agent writes like you from day one.",
+            },
+            {
+              icon: Rocket,
+              step: "03 — Feast",
+              title: "Growth, served",
+              body: "Agents qualify, write, follow up, and file to CRM while the ad-ops crew runs your spend. You watch the dashboards climb.",
+            },
+          ].map((s) => {
+            const Icon = s.icon;
+            return (
+              <div key={s.step} className="hud-panel p-7">
+                <Icon className="h-7 w-7 text-cyan" />
+                <div className="hud-label mt-4">{s.step}</div>
+                <h3 className="mt-1 font-heading text-xl font-bold">{s.title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{s.body}</p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
       {/* Pricing */}
       <section id="pricing" className="container py-20">
         <div className="mb-12 text-center">
-          <Badge variant="violet">Pricing</Badge>
-          <h2 className="mt-3 font-heading text-3xl font-bold">Strategic tiers for both lines</h2>
+          <Badge variant="violet">The Menu</Badge>
+          <h2 className="mt-3 font-heading text-3xl font-bold md:text-4xl">Memberships, not retainers.</h2>
           <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
-            Hold one subscription per line. Upgrade, downgrade, or cancel anytime from the console.
+            One subscription per line. Upgrade, downgrade, or cancel anytime from the console —
+            no lock-in, no awkward phone call.
           </p>
         </div>
         <Pricing />
@@ -142,15 +218,107 @@ export default function MarketingHome() {
             </div>
           ))}
         </div>
+
+        <div className="mt-6 grid gap-6 md:grid-cols-3">
+          {[
+            {
+              quote:
+                "It feels like having a full growth team on staff — except the lead scoring happens before I finish my coffee.",
+              who: "Founder, DTC skincare brand",
+            },
+            {
+              quote:
+                "The ad-ops crew rotates creative before fatigue hits. Our CPL chart just… stopped spiking.",
+              who: "CMO, home-services franchise",
+            },
+            {
+              quote:
+                "I paste call notes, hit send, and my CRM is clean. That alone pays for the membership.",
+              who: "Head of Sales, B2B SaaS",
+            },
+          ].map((t) => (
+            <figure key={t.who} className="hud-panel flex flex-col p-6">
+              <blockquote className="flex-1 text-sm leading-relaxed text-foreground/90">
+                &ldquo;{t.quote}&rdquo;
+              </blockquote>
+              <figcaption className="mt-4 border-t border-border/60 pt-3 font-mono text-xs text-muted-foreground">
+                {t.who}
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+        <p className="mt-3 text-center font-mono text-[0.6rem] uppercase tracking-widest text-muted-foreground/60">
+          Illustrative testimonials — replace with client results
+        </p>
+      </section>
+
+      {/* FAQ */}
+      <section id="faq" className="container py-20">
+        <div className="mb-10 text-center">
+          <Badge>FAQ</Badge>
+          <h2 className="mt-3 font-heading text-3xl font-bold">Before you&apos;re seated</h2>
+        </div>
+        <div className="mx-auto max-w-2xl space-y-3">
+          {[
+            {
+              q: "Can I hold subscriptions on both product lines?",
+              a: "Yes — one subscription per line, simultaneously. Many clients run Scale (agents) alongside Operate (ad-ops). Each line is billed and managed independently from your console.",
+            },
+            {
+              q: "What counts as an agent run?",
+              a: "One completed agent response. Your tier includes a monthly allowance (500 / 2,500 / 10,000); the usage meter in your workspace shows exactly where you stand, and we block gracefully at the limit with an upgrade path — never a surprise invoice.",
+            },
+            {
+              q: "Do the agents write in my brand voice?",
+              a: "Yes. Onboarding captures your voice and tone, and every agent honors it on every run. Scale and Command tiers add custom per-agent instructions.",
+            },
+            {
+              q: "Who actually manages the ad spend?",
+              a: "Humans. The AI agents handle the words and the data hygiene; a dedicated ad-ops crew handles campaign management, creative rotation, and strategy on the Operate and Dominate tiers.",
+            },
+            {
+              q: "Can I cancel or switch tiers?",
+              a: "Anytime, self-serve, from Billing — powered by the Stripe customer portal. Changes prorate automatically.",
+            },
+          ].map((f) => (
+            <details key={f.q} className="hud-panel group p-5 [&_summary::-webkit-details-marker]:hidden">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-heading font-semibold">
+                {f.q}
+                <span className="text-cyan transition-transform group-open:rotate-45">+</span>
+              </summary>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      {/* Final CTA band */}
+      <section className="container pb-20">
+        <div className="hud-panel hud-corners relative overflow-hidden p-10 text-center md:p-16">
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-cyan/10 via-violet/10 to-magenta/10" />
+          <h2 className="relative font-heading text-3xl font-bold md:text-5xl">
+            Your table is <span className="text-gradient">waiting</span>.
+          </h2>
+          <p className="relative mx-auto mt-3 max-w-xl text-muted-foreground">
+            The roster is limited on purpose — every client gets the full attention of the crew.
+          </p>
+          <div className="relative mt-7">
+            <Button asChild size="lg">
+              <Link href="/login">
+                Claim your seat <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
       </section>
 
       {/* Lead capture */}
-      <section id="contact" className="container py-20">
+      <section id="contact" className="container pb-20">
         <div className="grid items-center gap-10 md:grid-cols-2">
           <div>
             <Badge>Talk to us</Badge>
             <h2 className="mt-3 font-heading text-3xl font-bold">
-              Get a tailored growth plan
+              Prefer to be walked in?
             </h2>
             <p className="mt-3 text-muted-foreground">
               Tell us about your funnel and we&apos;ll map the exact agents and ad-ops tier to hit

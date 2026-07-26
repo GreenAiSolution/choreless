@@ -5,6 +5,7 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { CsvImport } from "@/components/csv-import";
 
 async function addMetric(formData: FormData) {
   "use server";
@@ -54,8 +55,8 @@ export default async function AdminMetricsPage() {
         <div className="hud-label">Admin</div>
         <h1 className="mt-1 font-heading text-3xl font-bold">Ad metrics entry</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Manual entry now; the ingestion layer is source-tagged so a Meta/Google API sync can be added later
-          without schema changes. CSV import posts to <code className="font-mono">/api/admin/metrics/import</code>.
+          Manual entry + CSV upload below. The ingestion layer is source-tagged (MANUAL / CSV / API) so a
+          Meta/Google Ads sync can be added later without schema changes.
         </p>
       </div>
 
@@ -93,6 +94,15 @@ export default async function AdminMetricsPage() {
           </div>
           <Button type="submit">Save row</Button>
         </form>
+      </Card>
+
+      <Card>
+        <CardTitle>CSV import</CardTitle>
+        <div className="mt-4">
+          <CsvImport
+            accounts={accounts.map((a) => ({ id: a.id, label: `${a.client.businessName} — ${a.name}` }))}
+          />
+        </div>
       </Card>
 
       <div>

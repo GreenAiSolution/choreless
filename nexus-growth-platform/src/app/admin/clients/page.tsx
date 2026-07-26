@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireAdmin } from "@/lib/tenancy";
 import { getAdminClientRows } from "@/lib/admin-data";
 import { formatCurrency, formatNumber } from "@/lib/utils";
@@ -25,12 +26,13 @@ export default async function AdminClientsPage() {
               <th className="p-4 text-right">MRR</th>
               <th className="p-4 text-right">Runs (mo)</th>
               <th className="p-4">Last activity</th>
+              <th className="p-4"></th>
             </tr>
           </thead>
           <tbody>
             {rows.length === 0 && (
               <tr>
-                <td colSpan={6} className="p-6 text-center text-muted-foreground">No clients yet.</td>
+                <td colSpan={7} className="p-6 text-center text-muted-foreground">No clients yet.</td>
               </tr>
             )}
             {rows.map((r) => (
@@ -44,6 +46,11 @@ export default async function AdminClientsPage() {
                 <td className="p-4 text-right hud-value">{formatCurrency(r.mrr)}</td>
                 <td className="p-4 text-right hud-value">{formatNumber(r.runs)}</td>
                 <td className="p-4 font-mono text-xs text-muted-foreground">{r.lastActivity.toISOString().slice(0, 10)}</td>
+                <td className="p-4 text-right">
+                  <Link href={`/admin/clients/${r.id}`} className="whitespace-nowrap text-xs text-cyan hover:underline">
+                    View as →
+                  </Link>
+                </td>
               </tr>
             ))}
           </tbody>

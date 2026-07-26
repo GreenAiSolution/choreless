@@ -2,42 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  Bot,
-  BarChart3,
-  Inbox,
-  FileText,
-  CreditCard,
-  Users,
-  Sliders,
-  ShieldHalf,
-} from "lucide-react";
+import { ShieldHalf } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-interface NavItem {
-  href: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-}
-
-const CLIENT_NAV: NavItem[] = [
-  { href: "/app", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/app/agents", label: "Agent Workspace", icon: Bot },
-  { href: "/app/ads", label: "Ad Ops", icon: BarChart3 },
-  { href: "/app/requests", label: "Requests", icon: Inbox },
-  { href: "/app/reports", label: "Reports", icon: FileText },
-  { href: "/app/billing", label: "Billing", icon: CreditCard },
-];
-
-const ADMIN_NAV: NavItem[] = [
-  { href: "/admin", label: "Overview", icon: LayoutDashboard },
-  { href: "/admin/clients", label: "Clients", icon: Users },
-  { href: "/admin/requests", label: "Request Queue", icon: Inbox },
-  { href: "/admin/metrics", label: "Ad Metrics", icon: BarChart3 },
-  { href: "/admin/agents", label: "Agent Prompts", icon: Sliders },
-  { href: "/admin/plans", label: "Plans & Pricing", icon: CreditCard },
-];
+import { CLIENT_NAV, ADMIN_NAV, isNavActive } from "@/lib/nav";
 
 export function AppSidebar({ variant }: { variant: "client" | "admin" }) {
   const pathname = usePathname();
@@ -58,7 +25,7 @@ export function AppSidebar({ variant }: { variant: "client" | "admin" }) {
 
       <nav className="flex flex-1 flex-col gap-1">
         {nav.map((item) => {
-          const active = pathname === item.href || (item.href !== "/app" && item.href !== "/admin" && pathname.startsWith(item.href));
+          const active = isNavActive(pathname, item.href);
           const Icon = item.icon;
           return (
             <Link

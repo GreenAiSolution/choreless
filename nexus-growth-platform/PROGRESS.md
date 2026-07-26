@@ -47,21 +47,31 @@ unchecked item. After each phase: `pnpm typecheck && pnpm lint && pnpm build`.
   (`/api/reports/generate`, server-side Anthropic with deterministic fallback).
 - 🟡 CSV upload UI widget on the admin page is a follow-up (route + manual entry done).
 
-## Phase 5 — Requests + Admin panel 🟡
-- ✅ Request pipeline (Open → In Progress → Delivered) with client submit + admin
+## Phase 5 — Requests + Admin panel ✅
+- Request pipeline (Open → In Progress → Delivered) with client submit + admin
   queue status advancement, admin client list (plan, MRR, usage, last activity),
   agent prompt editor, plans view (DB + Stripe link state), metrics entry.
-- 🟡 Comment threads per request (model exists; UI thread is a follow-up),
-  read-only impersonation view (tenancy helper supports admin `clientId`;
-  UI switcher is a follow-up), email notifications are console stubs (wire Resend).
+- Comment threads: `/app/requests/[id]` (client) + `/admin/requests/[id]`
+  (admin, with status pipeline control). Shared `CommentThread` component;
+  tenant-scoped lookups; notification console stubs in place (wire Resend).
+- Read-only impersonation: `/admin/clients/[clientId]` shows the client's
+  cockpit (subs, usage meter, 30d KPIs, recent requests + conversations) with a
+  "read-only" banner; linked from the clients table ("View as →").
+- CSV upload widget (`CsvImport`) on `/admin/metrics` posting to the import route
+  with per-row error reporting.
 
-## Phase 6 — Marketing site + polish 🟡
-- ✅ Landing page in cockpit style: hero, agent roster with robot headshots,
-  two product-line sections, six-tier pricing with Checkout, social-proof
-  placeholders, lead-capture form → Zapier hook. Loading/empty/error states on
-  the interactive surfaces.
-- 🟡 Full mobile-responsive QA pass, Lighthouse audit, and a comment-thread /
-  impersonation UI remain.
+## Phase 6 — Marketing site + polish ✅ (premium pass done; Lighthouse pending)
+- Landing page rebuilt with premium "vibe dining" positioning: velvet-rope hero,
+  ticker strip, agent roster ("The Crew"), product lines, 3-step "reservation to
+  feast" section, pricing as "The Menu", stat trio + testimonial placeholders
+  (marked illustrative), zero-JS FAQ (details/summary), final CTA band, lead
+  form → Zapier. Landing bundle got smaller (3.5 kB page JS).
+- Mobile navigation: `MobileNav` top bar + slide-over for client and admin
+  shells (desktop sidebar was previously the only nav). Shared nav config in
+  `src/lib/nav.ts`.
+- States: HUD loader (`loading.tsx` for /app and /admin), styled 404, global
+  error boundary with retry.
+- 🟡 Remaining: Lighthouse audit against a deployed build; wire Resend.
 
 ---
 
@@ -74,5 +84,6 @@ unchecked item. After each phase: `pnpm typecheck && pnpm lint && pnpm build`.
 1. Provision Neon/Vercel Postgres, set `DATABASE_URL`, `pnpm prisma:push && pnpm db:seed`.
 2. Run `pnpm stripe:setup`, wire the webhook, verify checkout → gating.
 3. Set `ANTHROPIC_API_KEY`, exercise a real agent run + monthly report.
-4. Build the request comment-thread UI and admin impersonation switcher.
-5. Mobile pass + Lighthouse; wire Resend for the notification stubs.
+4. Deploy to Vercel; run Lighthouse against the live URL.
+5. Wire Resend for the notification stubs; replace testimonial placeholders
+   with real client results.
