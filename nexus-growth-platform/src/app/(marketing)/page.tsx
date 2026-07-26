@@ -14,6 +14,8 @@ import { PRODUCT_LINES } from "@/lib/catalog";
 import { RobotAvatar } from "@/components/robot-avatar";
 import { Pricing } from "@/components/marketing/pricing";
 import { LeadForm } from "@/components/marketing/lead-form";
+import { AgentDemo } from "@/components/marketing/agent-demo";
+import { RoiCalculator } from "@/components/marketing/roi-calculator";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -35,6 +37,7 @@ export default function MarketingHome() {
             NEXUS<span className="text-gradient">GROWTH</span>
           </Link>
           <nav className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
+            <a href="#demo" className="hover:text-foreground">Test Drive</a>
             <a href="#agents" className="hover:text-foreground">The Crew</a>
             <a href="#lines" className="hover:text-foreground">Product Lines</a>
             <a href="#pricing" className="hover:text-foreground">The Menu</a>
@@ -92,6 +95,21 @@ export default function MarketingHome() {
           <span>Spend watched daily</span>
         </div>
       </div>
+
+      {/* Interactive test-drive */}
+      <section id="demo" className="container py-20">
+        <div className="mb-10 text-center">
+          <Badge>No signup required</Badge>
+          <h2 className="mt-3 font-heading text-3xl font-bold md:text-4xl">
+            Take an agent for a spin. Right now.
+          </h2>
+          <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
+            Pick a specialist and watch it work a real scenario. In your cockpit they run live —
+            on your leads, your offers, your brand voice.
+          </p>
+        </div>
+        <AgentDemo />
+      </section>
 
       {/* Agent roster */}
       <section id="agents" className="container py-20">
@@ -189,6 +207,17 @@ export default function MarketingHome() {
             );
           })}
         </div>
+      </section>
+
+      {/* ROI calculator */}
+      <section id="roi" className="container py-20">
+        <div className="mb-10 text-center">
+          <Badge variant="magenta">Do the math</Badge>
+          <h2 className="mt-3 font-heading text-3xl font-bold md:text-4xl">
+            See what a tuned funnel is worth
+          </h2>
+        </div>
+        <RoiCalculator />
       </section>
 
       {/* Pricing */}

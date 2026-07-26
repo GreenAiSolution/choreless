@@ -38,8 +38,18 @@ if (process.env.EMAIL_SERVER_HOST) {
   );
 }
 
+// Demo-friendly fallback: without AUTH_SECRET the whole site would 500.
+// No providers are registered without env config, so no real session can be
+// minted with this placeholder — but ALWAYS set AUTH_SECRET in production.
+const secret = process.env.AUTH_SECRET ?? "insecure-demo-secret-set-AUTH_SECRET";
+if (!process.env.AUTH_SECRET) {
+  console.warn("[auth] AUTH_SECRET is not set — using an insecure demo fallback.");
+}
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
+  secret,
+  trustHost: true,
   session: { strategy: "database" },
   pages: { signIn: "/login" },
   providers,
