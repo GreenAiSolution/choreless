@@ -6,7 +6,7 @@ The upgrade counter for [PHX/GROWTH](https://phxgrowth.com).
 flies your ad spend to profit" — sells three à la carte services (Premium AI
 Ads, AI Employees, Website Creation) and three managed flight plans on top of
 them (Pilot, Squadron, Fleet Command), flown by a roster of ten named
-operators. This property sells seven specialised upgrades that bolt onto those
+operators. This property sells five specialised upgrades that bolt onto those
 services, chosen because demand for each is visibly rising into 2027.
 
 `src/lib/upgrades.ts` is the entire public catalogue, and it carries a copy of
@@ -154,7 +154,7 @@ feature gating.
   services, their three managed flight plans, and the upgrades that bolt onto
   each, with the demand argument for every one. `upgrades.test.ts` enforces
   attached and additive (above) plus the rules that keep the page honest: each
-  service keeps at least three upgrades, each group is listed
+  service keeps at least one upgrade, each group is listed
   most-expensive-first, every upgrade costs less than the service it upgrades,
   gold is spent exactly once, the stated performance fees match the parent's
   real 8/6/4%, and **no copy anywhere quotes a percentage or an "N× better"
