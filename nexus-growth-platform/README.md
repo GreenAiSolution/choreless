@@ -11,14 +11,16 @@ services, chosen because demand for each is visibly rising into 2027.
 
 `src/lib/upgrades.ts` is the entire public catalogue, and it carries a copy of
 everything PHX/GROWTH publicly promises: the three services' bullet lists, the
-ten named operators, the twelve-item Manifest and the AOV/LTV revenue levers.
-`upgrades.test.ts` checks every upgrade against all four, on distinctive-word
-overlap:
+ten named operators, the twelve-item Manifest, the AOV/LTV revenue levers, the
+four automation loops and the flagship engagement. `upgrades.test.ts` checks
+every upgrade against all of it, on distinctive-word overlap:
 
 1. **Attached** — every upgrade names a real PHX/GROWTH service.
 2. **Additive vs the service** — nothing a service already lists.
 3. **Additive vs the roster** — nothing one of the ten operators already does.
-4. **Additive vs the Manifest and levers** — nothing the ad desk already manages.
+4. **Additive vs the Manifest, levers, loops and flagship** — nothing the ad
+   desk or the automation spine already manages, and no upgrade may borrow a
+   word from the flagship's own engagement list.
 
 Those rules have removed seven upgrades so far, and every one looked obviously
 additive until the parent's own words were sitting in the same file. Herald
