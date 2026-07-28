@@ -1,0 +1,35 @@
+name: MCP server
+
+# The MCP server is the only thing that can tell you the PHX/GROWTH PLUS lead
+# path is dead while you are away from a laptop. A build break in it is
+# therefore not cosmetic — it takes out the alarm, not the feature.
+on:
+  push:
+    branches: ["**"]
+    paths: ["phxgrowth-plus-mcp-server/**", ".github/workflows/mcp-server.yml"]
+  pull_request:
+    paths: ["phxgrowth-plus-mcp-server/**", ".github/workflows/mcp-server.yml"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: phxgrowth-plus-mcp-server
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm install
+
+      - name: Build
+        run: npm run build
+
+      # Proves the binary starts and speaks the protocol at all. The full smoke
+      # test needs a running site, so it stays a local step — see the README.
+      - name: Start
+        run: node dist/index.js < /dev/null
+        timeout-minutes: 1
