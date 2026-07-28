@@ -10,6 +10,8 @@ import {
 } from "@/lib/instruments/marginal";
 import { AUTOMATION_LOOPS } from "@/lib/upgrades";
 import { Instrument, Readout, Figure, Dial } from "@/components/marketing/instrument";
+import { usePlayground } from "@/components/marketing/playground";
+import { FxCanvas } from "@/components/marketing/fx";
 
 /**
  * INSTRUMENT 04 — THE MARGINAL DOLLAR
@@ -49,105 +51,8 @@ import { Instrument, Readout, Figure, Dial } from "@/components/marketing/instru
 const COLORS = ["#22d3ee", "#8b5cf6", "#ec4899", "#f0b429"];
 
 export function MarginalDollar() {
-  const [channels, setChannels] = React.useState<ChannelInput[]>(CHANNEL_DEFAULTS);
-  const [exponent, setExponent] = React.useState(1);
-  const canvasRef = React.useRef<HTMLCanvasElement>(null);
-
+  const { channels, setChannels, exponent, setExponent, justSeeded } = usePlayground();
   const reading = React.useMemo(() => readMarginal(channels, exponent), [channels, exponent]);
-
-  React.useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const w = canvas.clientWidth;
-    const h = canvas.clientHeight;
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, w, h);
-
-    const pad = { l: 46, r: 12, t: 14, b: 26 };
-    const plotW = w - pad.l - pad.r;
-    const plotH = h - pad.t - pad.b;
-
-    const live = reading.channels.filter((c) => !c.idle);
-    if (live.length === 0) return;
-
-    const maxSpend = Math.max(...live.map((c) => c.spend)) * 1.8;
-    const maxLeads = Math.max(...live.map((c) => leadsAt(maxSpend, c.leads / Math.pow(c.spend, reading.exponent), reading.exponent)));
-    if (!Number.isFinite(maxLeads) || maxLeads <= 0) return;
-
-    const X = (s: number) => pad.l + (s / maxSpend) * plotW;
-    const Y = (l: number) => pad.t + plotH - (l / maxLeads) * plotH;
-
-    // Grid.
-    ctx.strokeStyle = "rgba(255,255,255,0.05)";
-    ctx.lineWidth = 1;
-    ctx.font = "9px ui-monospace, monospace";
-    ctx.fillStyle = "rgba(255,255,255,0.35)";
-    for (let i = 0; i <= 4; i++) {
-      const y = pad.t + (plotH * i) / 4;
-      ctx.beginPath();
-      ctx.moveTo(pad.l, y);
-      ctx.lineTo(w - pad.r, y);
-      ctx.stroke();
-      ctx.textAlign = "right";
-      ctx.textBaseline = "middle";
-      ctx.fillText(String(Math.round((maxLeads * (4 - i)) / 4)), pad.l - 6, y);
-    }
-    ctx.textAlign = "center";
-    ctx.textBaseline = "top";
-    ctx.fillText("$0", pad.l, h - pad.b + 6);
-    ctx.fillText(`$${Math.round(maxSpend / 1000)}k/mo`, w - pad.r, h - pad.b + 6);
-
-    // Curves.
-    live.forEach((c, i) => {
-      const color = COLORS[i % COLORS.length]!;
-      const k = c.leads / Math.pow(c.spend, reading.exponent);
-
-      ctx.beginPath();
-      for (let px = 0; px <= plotW; px += 2) {
-        const s = (px / plotW) * maxSpend;
-        const l = leadsAt(s, k, reading.exponent);
-        if (px === 0) ctx.moveTo(X(s), Y(l));
-        else ctx.lineTo(X(s), Y(l));
-      }
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 2;
-      ctx.globalAlpha = 0.9;
-      ctx.stroke();
-      ctx.globalAlpha = 1;
-
-      // Where they are today.
-      ctx.beginPath();
-      ctx.arc(X(c.spend), Y(c.leads), 4.5, 0, Math.PI * 2);
-      ctx.fillStyle = color;
-      ctx.fill();
-
-      // Where the maths would put them.
-      if (!reading.neutral && Math.abs(c.delta) > c.spend * 0.02) {
-        const sl = leadsAt(c.suggested, k, reading.exponent);
-        ctx.beginPath();
-        ctx.arc(X(c.suggested), Y(sl), 4.5, 0, Math.PI * 2);
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 1.75;
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.setLineDash([3, 3]);
-        ctx.moveTo(X(c.spend), Y(c.leads));
-        ctx.lineTo(X(c.suggested), Y(sl));
-        ctx.strokeStyle = color;
-        ctx.globalAlpha = 0.5;
-        ctx.stroke();
-        ctx.setLineDash([]);
-        ctx.globalAlpha = 1;
-      }
-    });
-  }, [reading]);
 
   function edit(key: string, patch: Partial<ChannelInput>) {
     setChannels((prev) => prev.map((c) => (c.key === key ? { ...c, ...patch } : c)));
@@ -157,14 +62,118 @@ export function MarginalDollar() {
 
   return (
     <Instrument
-      index={4}
+      index={5}
       id="marginal"
       name="The Marginal Dollar"
       reads="Where your next advertising dollar should go — which is never the channel with the best average."
     >
       <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
-        <div className="phx-card flex flex-col p-5 md:p-6">
-          <canvas ref={canvasRef} aria-hidden className="h-[20rem] w-full" />
+        <div className={cn("phx-card fx-panel flex flex-col p-5 md:p-6", justSeeded && "fx-sheen")}>
+          <FxCanvas
+            className="h-[20rem] w-full"
+            deps={[reading]}
+            render={(ctx, w, h, t) => {
+              const pad = { l: 46, r: 12, t: 14, b: 26 };
+              const plotW = w - pad.l - pad.r;
+              const plotH = h - pad.t - pad.b;
+              const live = reading.channels.filter((c) => !c.idle);
+              if (live.length === 0 || plotW <= 0 || plotH <= 0) return;
+
+              const maxSpend = Math.max(...live.map((c) => c.spend)) * 1.8;
+              const maxLeads = Math.max(
+                ...live.map((c) =>
+                  leadsAt(maxSpend, c.leads / Math.pow(c.spend, reading.exponent), reading.exponent),
+                ),
+              );
+              if (!Number.isFinite(maxLeads) || maxLeads <= 0) return;
+
+              const X = (s: number) => pad.l + (s / maxSpend) * plotW;
+              const Y = (l: number) => pad.t + plotH - (l / maxLeads) * plotH;
+
+              ctx.strokeStyle = "rgba(255,255,255,0.05)";
+              ctx.lineWidth = 1;
+              ctx.font = "9px ui-monospace, monospace";
+              ctx.fillStyle = "rgba(255,255,255,0.35)";
+              for (let i = 0; i <= 4; i++) {
+                const y = pad.t + (plotH * i) / 4;
+                ctx.beginPath();
+                ctx.moveTo(pad.l, y);
+                ctx.lineTo(w - pad.r, y);
+                ctx.stroke();
+                ctx.textAlign = "right";
+                ctx.textBaseline = "middle";
+                ctx.fillText(String(Math.round((maxLeads * (4 - i)) / 4)), pad.l - 6, y);
+              }
+              ctx.textAlign = "center";
+              ctx.textBaseline = "top";
+              ctx.fillText("$0", pad.l, h - pad.b + 6);
+              ctx.fillText(`$${Math.round(maxSpend / 1000)}k/mo`, w - pad.r, h - pad.b + 6);
+
+              // Curves draw themselves in on first paint, then hold.
+              const grow = Math.min(1, t / 0.9);
+
+              live.forEach((c, i) => {
+                const color = COLORS[i % COLORS.length]!;
+                const k = c.leads / Math.pow(c.spend, reading.exponent);
+
+                ctx.beginPath();
+                for (let px = 0; px <= plotW * grow; px += 2) {
+                  const sp = (px / plotW) * maxSpend;
+                  const l = leadsAt(sp, k, reading.exponent);
+                  if (px === 0) ctx.moveTo(X(sp), Y(l));
+                  else ctx.lineTo(X(sp), Y(l));
+                }
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                ctx.globalAlpha = 0.9;
+                ctx.stroke();
+
+                // A soft glow under each curve, so three lines stay separable.
+                ctx.globalAlpha = 0.1;
+                ctx.lineWidth = 7;
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+                ctx.lineWidth = 2;
+
+                // Where they are today, with a slow beacon.
+                const beat = 0.5 + Math.sin(t * 2 + i) * 0.5;
+                ctx.beginPath();
+                ctx.arc(X(c.spend), Y(c.leads), 4.5, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(X(c.spend), Y(c.leads), 5 + beat * 6, 0, Math.PI * 2);
+                ctx.strokeStyle = color;
+                ctx.globalAlpha = (1 - beat) * 0.5;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+
+                // Where the maths would put them, and the money moving there.
+                if (!reading.neutral && Math.abs(c.delta) > c.spend * 0.02) {
+                  const sl = leadsAt(c.suggested, k, reading.exponent);
+                  ctx.beginPath();
+                  ctx.arc(X(c.suggested), Y(sl), 4.5, 0, Math.PI * 2);
+                  ctx.strokeStyle = color;
+                  ctx.lineWidth = 1.75;
+                  ctx.stroke();
+
+                  ctx.beginPath();
+                  ctx.setLineDash([3, 3]);
+                  ctx.lineDashOffset = -t * 14;
+                  ctx.moveTo(X(c.spend), Y(c.leads));
+                  ctx.lineTo(X(c.suggested), Y(sl));
+                  ctx.strokeStyle = color;
+                  ctx.globalAlpha = 0.6;
+                  ctx.lineWidth = 1.5;
+                  ctx.stroke();
+                  ctx.setLineDash([]);
+                  ctx.lineDashOffset = 0;
+                  ctx.globalAlpha = 1;
+                }
+              });
+            }}
+          />
           <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1.5 text-[0.68rem] text-muted-foreground">
             {reading.channels
               .filter((c) => !c.idle)

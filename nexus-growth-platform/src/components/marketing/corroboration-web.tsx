@@ -7,7 +7,10 @@ import {
   webLayout,
   type CorroborationAnswers,
 } from "@/lib/instruments/corroboration";
+import { cn } from "@/lib/utils";
 import { Instrument, Readout, Figure, Toggle } from "@/components/marketing/instrument";
+import { usePlayground } from "@/components/marketing/playground";
+import { FxCanvas } from "@/components/marketing/fx";
 import { pulse } from "@/components/marketing/pulse";
 
 /**
@@ -44,110 +47,9 @@ const COLORS = {
   text: "rgba(255,255,255,0.55)",
 };
 
-export function CorroborationWeb({ onAdd }: { onAdd?: (key: string) => void }) {
-  const [answers, setAnswers] = React.useState<CorroborationAnswers>({});
-  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+export function CorroborationWeb() {
+  const { citations: answers, setCitations: setAnswers, add, justSeeded } = usePlayground();
   const reading = React.useMemo(() => readCorroboration(answers), [answers]);
-
-  React.useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const size = canvas.clientWidth;
-    canvas.width = size * dpr;
-    canvas.height = size * dpr;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, size, size);
-
-    const cx = size / 2;
-    const cy = size / 2;
-    const radius = size * 0.36;
-    const nodes = webLayout(answers, radius);
-
-    // Edges first, so nodes sit on top of their own lines.
-    for (const n of nodes) {
-      const x = cx + n.x;
-      const y = cy + n.y;
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-
-      if (!n.present) {
-        // No record: a hint of where a line would be.
-        ctx.setLineDash([2, 6]);
-        ctx.strokeStyle = COLORS.faint;
-        ctx.lineWidth = 1;
-        ctx.lineTo(x, y);
-        ctx.stroke();
-      } else if (n.consistent) {
-        ctx.setLineDash([]);
-        ctx.strokeStyle = COLORS.solid;
-        ctx.lineWidth = n.anchor ? 2 : 1.25;
-        ctx.globalAlpha = 0.75;
-        ctx.lineTo(x, y);
-        ctx.stroke();
-        ctx.globalAlpha = 1;
-      } else {
-        // Present but disagreeing: drawn severed, because that is what it is.
-        const bx = cx + n.x * 0.55;
-        const by = cy + n.y * 0.55;
-        ctx.setLineDash([]);
-        ctx.strokeStyle = COLORS.broken;
-        ctx.lineWidth = n.anchor ? 2 : 1.25;
-        ctx.lineTo(bx, by);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(cx + n.x * 0.72, cy + n.y * 0.72);
-        ctx.lineTo(x, y);
-        ctx.stroke();
-      }
-      ctx.setLineDash([]);
-    }
-
-    // Nodes.
-    for (const n of nodes) {
-      const x = cx + n.x;
-      const y = cy + n.y;
-      const r = n.anchor ? 5.5 : 4;
-      ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI * 2);
-      ctx.fillStyle = !n.present
-        ? "rgba(255,255,255,0.14)"
-        : n.consistent
-          ? COLORS.solid
-          : COLORS.broken;
-      ctx.fill();
-      if (n.anchor) {
-        ctx.beginPath();
-        ctx.arc(x, y, r + 3.5, 0, Math.PI * 2);
-        ctx.strokeStyle = ctx.fillStyle as string;
-        ctx.globalAlpha = 0.35;
-        ctx.lineWidth = 1;
-        ctx.stroke();
-        ctx.globalAlpha = 1;
-      }
-    }
-
-    // The hub — you, making claims.
-    ctx.beginPath();
-    ctx.arc(cx, cy, 13, 0, Math.PI * 2);
-    ctx.fillStyle = COLORS.bg;
-    ctx.fill();
-    ctx.strokeStyle = COLORS.hub;
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    ctx.fillStyle = COLORS.hub;
-    ctx.font = "600 9px ui-monospace, monospace";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("YOU", cx, cy);
-
-    ctx.fillStyle = COLORS.text;
-    ctx.font = "8px ui-monospace, monospace";
-    ctx.fillText(`${reading.consistent} agreeing · ${reading.conflicts} in conflict`, cx, size - 8);
-  }, [answers, reading]);
 
   function set(key: string, patch: Partial<{ present: boolean; consistent: boolean }>) {
     setAnswers((prev) => {
@@ -162,17 +64,122 @@ export function CorroborationWeb({ onAdd }: { onAdd?: (key: string) => void }) {
 
   return (
     <Instrument
-      index={2}
+      index={3}
       id="web"
       name="The Corroboration Web"
       reads="Whether anybody except you says you exist — and whether they agree with each other."
     >
       <div className="grid gap-6 lg:grid-cols-[1fr_1.1fr]">
-        <div className="phx-card flex flex-col justify-center p-5 md:p-6">
-          <canvas
-            ref={canvasRef}
-            aria-hidden
+        <div className={cn("phx-card fx-panel flex flex-col justify-center p-5 md:p-6", justSeeded && "fx-sheen")}>
+          <FxCanvas
             className="mx-auto aspect-square w-full max-w-[30rem]"
+            deps={[answers, reading]}
+            render={(ctx, size, _h, t) => {
+              const cx = size / 2;
+              const cy = size / 2;
+              const nodes = webLayout(answers, size * 0.36);
+
+              for (const n of nodes) {
+                const x = cx + n.x;
+                const y = cy + n.y;
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+
+                if (!n.present) {
+                  ctx.setLineDash([2, 6]);
+                  ctx.strokeStyle = COLORS.faint;
+                  ctx.lineWidth = 1;
+                  ctx.lineTo(x, y);
+                  ctx.stroke();
+                } else if (n.consistent) {
+                  ctx.setLineDash([]);
+                  ctx.strokeStyle = COLORS.solid;
+                  ctx.lineWidth = n.anchor ? 2 : 1.25;
+                  ctx.globalAlpha = 0.7;
+                  ctx.lineTo(x, y);
+                  ctx.stroke();
+                  ctx.globalAlpha = 1;
+                } else {
+                  // Present but disagreeing: drawn severed, because that is
+                  // what it is — and the break sparks, so the eye finds it.
+                  ctx.setLineDash([]);
+                  ctx.strokeStyle = COLORS.broken;
+                  ctx.lineWidth = n.anchor ? 2 : 1.25;
+                  ctx.lineTo(cx + n.x * 0.55, cy + n.y * 0.55);
+                  ctx.stroke();
+                  ctx.beginPath();
+                  ctx.moveTo(cx + n.x * 0.72, cy + n.y * 0.72);
+                  ctx.lineTo(x, y);
+                  ctx.stroke();
+
+                  const spark = 0.5 + Math.sin(t * 5 + n.x) * 0.5;
+                  ctx.beginPath();
+                  ctx.arc(cx + n.x * 0.635, cy + n.y * 0.635, 1.6 + spark * 2, 0, Math.PI * 2);
+                  ctx.fillStyle = `rgba(240,180,41,${0.25 + spark * 0.5})`;
+                  ctx.fill();
+                }
+                ctx.setLineDash([]);
+
+                // Corroboration travelling inward: the direction matters, it is
+                // the outside world confirming you, not you broadcasting.
+                if (n.present && n.consistent) {
+                  const phase = 1 - (((t * 0.34 + n.y * 0.004) % 1) + 1) % 1;
+                  ctx.beginPath();
+                  ctx.arc(cx + n.x * phase, cy + n.y * phase, 2, 0, Math.PI * 2);
+                  ctx.fillStyle = `rgba(52,211,153,${phase * 0.85})`;
+                  ctx.fill();
+                }
+              }
+
+              for (const n of nodes) {
+                const x = cx + n.x;
+                const y = cy + n.y;
+                const r = n.anchor ? 5.5 : 4;
+                ctx.beginPath();
+                ctx.arc(x, y, r, 0, Math.PI * 2);
+                ctx.fillStyle = !n.present
+                  ? "rgba(255,255,255,0.14)"
+                  : n.consistent
+                    ? COLORS.solid
+                    : COLORS.broken;
+                ctx.fill();
+                if (n.anchor) {
+                  ctx.beginPath();
+                  ctx.arc(x, y, r + 3.5 + (n.present ? 0 : Math.sin(t * 2) * 0.8), 0, Math.PI * 2);
+                  ctx.strokeStyle = ctx.fillStyle as string;
+                  ctx.globalAlpha = 0.35;
+                  ctx.lineWidth = 1;
+                  ctx.stroke();
+                  ctx.globalAlpha = 1;
+                }
+              }
+
+              // The hub — you, making claims. Breathes with how corroborated
+              // the whole web is, so the centre gets brighter as it firms up.
+              const conf = reading.reach > 0 ? reading.consistent / reading.reach : 0;
+              ctx.beginPath();
+              ctx.arc(cx, cy, 13 + Math.sin(t * 1.5) * 0.8, 0, Math.PI * 2);
+              ctx.fillStyle = COLORS.bg;
+              ctx.fill();
+              ctx.strokeStyle = COLORS.hub;
+              ctx.globalAlpha = 0.45 + conf * 0.55;
+              ctx.lineWidth = 2;
+              ctx.stroke();
+              ctx.globalAlpha = 1;
+              ctx.fillStyle = COLORS.hub;
+              ctx.font = "600 9px ui-monospace, monospace";
+              ctx.textAlign = "center";
+              ctx.textBaseline = "middle";
+              ctx.fillText("YOU", cx, cy);
+
+              ctx.fillStyle = COLORS.text;
+              ctx.font = "8px ui-monospace, monospace";
+              ctx.fillText(
+                `${reading.consistent} agreeing · ${reading.conflicts} in conflict`,
+                cx,
+                size - 8,
+              );
+            }}
           />
           <div className="mt-2 flex flex-wrap justify-center gap-x-5 gap-y-1.5 text-[0.68rem] text-muted-foreground">
             <span className="flex items-center gap-1.5">
@@ -248,7 +255,7 @@ export function CorroborationWeb({ onAdd }: { onAdd?: (key: string) => void }) {
                 : "Nothing to fix here. Your web is intact — which makes anything the Inspector above flagged a markup problem rather than a citation one."
         }
         upgradeKey={reading.corroborated ? undefined : "citation-authority"}
-        onAdd={onAdd}
+        onAdd={add}
       />
     </Instrument>
   );

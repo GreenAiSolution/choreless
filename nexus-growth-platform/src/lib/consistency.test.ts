@@ -183,6 +183,47 @@ describe("counts are counted, never typed", () => {
   });
 });
 
+describe("motion stays removable", () => {
+  /**
+   * Every effect on this page is decoration, and decoration that cannot be
+   * switched off is an accessibility defect rather than a flourish. `FxCanvas`
+   * and `useFrameLoop` are the only two places that own that contract — they
+   * draw a single finished frame under `prefers-reduced-motion` and park the
+   * loop when the panel is off screen.
+   *
+   * A component that reaches for `requestAnimationFrame` directly bypasses
+   * both: it animates for somebody who asked it not to, and it keeps a laptop
+   * fan running for a canvas nobody is looking at.
+   */
+  it("routes every canvas through FxCanvas", async () => {
+    // The precise rule, rather than "no requestAnimationFrame anywhere": the
+    // analytics beacon legitimately uses a one-shot rAF to throttle a scroll
+    // handler, which is not an animation loop and does not need a
+    // reduced-motion branch. What must never happen is a component painting
+    // its own canvas on its own clock.
+    const { readdir, readFile } = await import("node:fs/promises");
+    const dir = new URL("../components/marketing/", import.meta.url);
+    for (const f of (await readdir(dir)).filter((n) => n.endsWith(".tsx"))) {
+      if (f === "fx.tsx") continue; // the one place that owns the contract
+      const src = await readFile(new URL(f, dir), "utf8");
+      expect(src, `${f} renders a raw <canvas> instead of using FxCanvas`).not.toMatch(
+        /<canvas[\s>]/,
+      );
+    }
+  });
+
+  it("gives the reduced-motion branch every animated class", async () => {
+    const { readFile } = await import("node:fs/promises");
+    const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+    const reduced = css.slice(css.indexOf("@media (prefers-reduced-motion: reduce)"));
+    // Every fx-* class that animates must be named in a reduce block.
+    for (const cls of ["fx-live", "fx-flash", "fx-breathe", "fx-caret", "fx-tick", "fx-sheen"]) {
+      expect(reduced, `${cls} keeps animating under reduced motion`).toContain(cls);
+    }
+    expect(reduced).toContain("[data-reveal]");
+  });
+});
+
 describe("money is rendered in the units it is stored in", () => {
   /**
    * The Response Clock shipped a draft quoting "$1,190,000 leaving every

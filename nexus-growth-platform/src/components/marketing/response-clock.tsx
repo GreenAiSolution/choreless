@@ -6,6 +6,7 @@ import { CLOCK_DEFAULTS, readClock, type ClockInputs } from "@/lib/instruments/r
 import { computeLeak, type LeakInputs } from "@/lib/leak";
 import { upgradeByKey } from "@/lib/upgrades";
 import { Instrument, Readout, Figure, Dial } from "@/components/marketing/instrument";
+import { usePlayground } from "@/components/marketing/playground";
 
 /**
  * INSTRUMENT 03 — THE RESPONSE CLOCK
@@ -32,16 +33,8 @@ import { Instrument, Readout, Figure, Dial } from "@/components/marketing/instru
 
 const FIX = upgradeByKey("voice-employee")!;
 
-export function ResponseClock({ onAdd }: { onAdd?: (key: string) => void }) {
-  const [clock, setClock] = React.useState<ClockInputs>(CLOCK_DEFAULTS);
-  const [money, setMoney] = React.useState<LeakInputs>({
-    callsPerMonth: 180,
-    missedPct: 22,
-    closeRate: 35,
-    // Cents, like every other price in this codebase.
-    jobValue: 85000,
-    recovery: 0.5,
-  });
+export function ResponseClock() {
+  const { clock, setClock, money, setMoney, add, justSeeded } = usePlayground();
 
   const reading = React.useMemo(() => readClock(clock), [clock]);
   const leak = React.useMemo(() => computeLeak(money, FIX.price), [money]);
@@ -65,13 +58,13 @@ export function ResponseClock({ onAdd }: { onAdd?: (key: string) => void }) {
 
   return (
     <Instrument
-      index={3}
+      index={4}
       id="clock"
       name="The Response Clock"
       reads="The five minutes after somebody calls you, second by second — including the part where somebody else answers."
     >
       <div className="grid gap-6 lg:grid-cols-[1.25fr_1fr]">
-        <div className="phx-card self-start p-5 md:p-6">
+        <div className={cn("phx-card fx-panel self-start p-5 md:p-6", justSeeded && "fx-sheen")}>
           {/* ---- the timeline ---- */}
           <div className="relative pt-8">
             {/* markers */}
@@ -300,7 +293,7 @@ export function ResponseClock({ onAdd }: { onAdd?: (key: string) => void }) {
               : `Your callback beats the field — but ${reading.silentOfTen} in 10 callers leave no message at all, so you are only calling back the minority who did.`
         }
         upgradeKey={leak.underwater ? undefined : FIX.key}
-        onAdd={onAdd}
+        onAdd={add}
       />
     </Instrument>
   );

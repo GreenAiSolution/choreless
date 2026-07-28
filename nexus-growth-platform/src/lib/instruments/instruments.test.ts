@@ -14,6 +14,7 @@ import {
   type CorroborationAnswers,
 } from "./corroboration";
 import { CLOCK_DEFAULTS, readClock } from "./response";
+import { QUERIES, readFan, fanLayout } from "./queries";
 import { CHANNEL_DEFAULTS, readMarginal, leadsAt } from "./marginal";
 
 /**
@@ -222,6 +223,102 @@ describe("the Response Clock", () => {
   it("reports how many callers leave no trace, from the rate given", () => {
     expect(readClock({ ...CLOCK_DEFAULTS, voicemailRate: 2 }).silentOfTen).toBe(8);
     expect(readClock({ ...CLOCK_DEFAULTS, voicemailRate: 10 }).silentOfTen).toBe(0);
+  });
+});
+
+describe("the Query Fan", () => {
+  it("locks everything when nothing is declared", () => {
+    const r = readFan(noAnswers);
+    expect(r.winnable).toBe(0);
+    expect(r.locked).toBe(r.total);
+    expect(r.total).toBe(QUERIES.length);
+  });
+
+  it("opens everything when every attribute is declared", () => {
+    const r = readFan(full(false));
+    expect(r.winnable).toBe(QUERIES.length);
+    expect(r.locked).toBe(0);
+    expect(r.keystone).toBeNull();
+  });
+
+  it("is set membership, not a score", () => {
+    // A question is winnable exactly when every attribute it filters on is
+    // present. No partial credit — an assistant applying "open now" does not
+    // rank you lower for having no hours, it removes you from the list.
+    const answers: EntityAnswers = {
+      category: { stated: true, corroborated: false },
+      area: { stated: true, corroborated: false },
+    };
+    const r = readFan(answers);
+    const discovery = r.readings.find((x) => x.query.text === "who does this in my town")!;
+    expect(discovery.winnable).toBe(true);
+    const openNow = r.readings.find((x) => x.query.text === "who's open right now near me")!;
+    expect(openNow.winnable).toBe(false);
+    expect(openNow.missing).toContain("Opening hours");
+  });
+
+  it("ignores corroboration — this instrument only asks whether it is readable", () => {
+    // Corroboration is instrument 02's subject. Conflating them here would
+    // double-count one problem and make both readouts wrong.
+    expect(readFan(full(false)).winnable).toBe(readFan(full(true)).winnable);
+  });
+
+  it("names the one missing attribute that unlocks the most questions", () => {
+    // Everything except hours. The keystone must be hours, and it must only
+    // count questions that hours alone would flip.
+    const answers: EntityAnswers = Object.fromEntries(
+      ENTITY_ATTRIBUTES.filter((a) => a.key !== "hours").map((a) => [
+        a.key,
+        { stated: true, corroborated: false },
+      ]),
+    );
+    const r = readFan(answers);
+    expect(r.keystone?.key).toBe("hours");
+    expect(r.keystone!.unlocks).toBe(r.locked);
+  });
+
+  it("never names a keystone that would not actually unlock anything", () => {
+    // With two attributes missing from every locked question, no single fix
+    // opens one, so claiming a keystone would be advice that does not work.
+    const answers: EntityAnswers = {
+      category: { stated: true, corroborated: false },
+    };
+    const r = readFan(answers);
+    if (r.keystone) {
+      expect(r.keystone.unlocks).toBeGreaterThan(0);
+    }
+  });
+
+  it("lays the fan out deterministically and inside the arc", () => {
+    const a = fanLayout(readFan(full(true)));
+    expect(a).toEqual(fanLayout(readFan(full(true))));
+    expect(a).toHaveLength(QUERIES.length);
+    for (const n of a) {
+      expect(n.angle).toBeGreaterThanOrEqual(-Math.PI * 1.25 - 1e-9);
+      expect(n.angle).toBeLessThanOrEqual(Math.PI * 0.25 + 1e-9);
+      expect(n.reach).toBeGreaterThan(0);
+      expect(n.reach).toBeLessThanOrEqual(1);
+    }
+  });
+
+  it("claims no volume for any question", () => {
+    // These are phrasings we wrote, not queries we measured. A number beside
+    // one would be the invented statistic this site refuses to print.
+    for (const q of QUERIES) {
+      expect(q.text).not.toMatch(/\d/);
+      expect(Object.keys(q)).toEqual(expect.not.arrayContaining(["volume", "searches", "count"]));
+    }
+  });
+
+  it("only filters on attributes the Inspector actually offers", () => {
+    // A question needing an attribute nobody can declare would be permanently
+    // locked with no way to fix it — an instrument that only ever says no.
+    const known = new Set(ENTITY_ATTRIBUTES.map((a) => a.key));
+    for (const q of QUERIES) {
+      for (const need of q.needs) {
+        expect(known.has(need), `"${q.text}" needs unknown attribute "${need}"`).toBe(true);
+      }
+    }
   });
 });
 

@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { upgradeByKey } from "@/lib/upgrades";
 import { formatCurrency } from "@/lib/utils";
 import { pulse } from "@/components/marketing/pulse";
+import { useCountUp, Reveal } from "@/components/marketing/fx";
 
 /**
  * The shared chassis every instrument is mounted in.
@@ -60,6 +61,7 @@ export function Instrument({
   return (
     <section id={id} className="scroll-mt-24 border-t border-white/[0.06] py-16 md:py-20">
       <div className="container">
+        <Reveal>
         <header className="flex flex-col gap-3 md:flex-row md:items-baseline md:gap-6">
           <span className="font-mono text-[0.7rem] tabular-nums tracking-[0.3em] text-cyan">
             {String(index).padStart(2, "0")}
@@ -74,7 +76,10 @@ export function Instrument({
             </p>
           </div>
         </header>
-        <div className="mt-9">{children}</div>
+        </Reveal>
+        <Reveal delay={80} className="mt-9">
+          {children}
+        </Reveal>
       </div>
     </section>
   );
@@ -110,17 +115,32 @@ export function Readout({
     );
   }
 
+  // A sheen sweeps the panel each time the verdict changes, so a visitor who
+  // just flipped one toggle at the top of a long instrument is told where the
+  // consequence landed.
+  const [flash, setFlash] = React.useState(false);
+  const prev = React.useRef(verdict);
+  React.useEffect(() => {
+    if (prev.current !== verdict) {
+      prev.current = verdict;
+      setFlash(true);
+      const id = window.setTimeout(() => setFlash(false), 1100);
+      return () => window.clearTimeout(id);
+    }
+  }, [verdict]);
+
   return (
     <div
       className={cn(
         "mt-7 rounded-2xl border bg-black/25 p-6 md:p-7",
         tone.ring,
+        flash && "fx-sheen",
       )}
       role="status"
       aria-live="polite"
     >
       <div className="flex flex-wrap items-center gap-2.5">
-        <span className={cn("h-1.5 w-1.5 rounded-full", tone.dot)} />
+        <span className={cn("h-1.5 w-1.5 rounded-full", tone.dot, verdict === "gap" && "fx-live text-gold")} />
         <span className={cn("eyebrow text-[0.6rem]", tone.text)}>{tone.label}</span>
       </div>
 
@@ -293,6 +313,16 @@ export function Figure({
   caption: string;
   tone?: "plain" | "cyan" | "gold" | "signal" | "magenta";
 }) {
+  /**
+   * Counts up when the value is a plain number, and is left completely alone
+   * when it is not. A readout like "$11,900" or "—" has to render exactly as
+   * given; guessing at its numeric part is how a currency symbol goes missing
+   * or a placeholder becomes a zero.
+   */
+  const numeric = /^-?\d+$/.test(value) ? Number(value) : null;
+  const counted = useCountUp(numeric ?? 0);
+  const shown = numeric === null ? value : String(counted);
+
   const color = {
     plain: "text-foreground",
     cyan: "text-cyan",
@@ -303,7 +333,7 @@ export function Figure({
   return (
     <div className="min-w-0">
       <div className={cn("font-mono text-2xl font-bold tabular-nums tracking-tight md:text-3xl", color)}>
-        {value}
+        {shown}
         {unit && <span className="ml-1 text-sm font-normal text-muted-foreground">{unit}</span>}
       </div>
       <div className="mt-1 text-[0.72rem] leading-snug text-muted-foreground">{caption}</div>

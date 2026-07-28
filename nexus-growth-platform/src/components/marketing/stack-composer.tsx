@@ -12,7 +12,7 @@ import {
   serviceByKey,
 } from "@/lib/upgrades";
 import { Instrument, Figure } from "@/components/marketing/instrument";
-import { pulse } from "@/components/marketing/pulse";
+import { usePlayground } from "@/components/marketing/playground";
 
 /**
  * INSTRUMENT 05 — THE STACK COMPOSER
@@ -69,25 +69,7 @@ const SERVICE_TONE: Record<string, { dot: string; ring: string; text: string }> 
 };
 
 export function StackComposer() {
-  const [picked, setPicked] = React.useState<string[]>([]);
-
-  // The instruments above dispatch this. The composer and the enquiry form
-  // both listen, so one click updates both without a store.
-  React.useEffect(() => {
-    function onToggle(e: Event) {
-      const key = (e as CustomEvent<string>).detail;
-      if (!UPGRADES.some((u) => u.key === key)) return;
-      setPicked((prev) => (prev.includes(key) ? prev : [...prev, key]));
-    }
-    window.addEventListener("phx:toggle-upgrade", onToggle);
-    return () => window.removeEventListener("phx:toggle-upgrade", onToggle);
-  }, []);
-
-  function toggle(key: string) {
-    setPicked((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
-    window.dispatchEvent(new CustomEvent("phx:toggle-upgrade", { detail: key }));
-    pulse("upgrade_added", key);
-  }
+  const { picked, toggle } = usePlayground();
 
   const chosen = UPGRADES.filter((u) => picked.includes(u.key));
   const monthly = chosen.filter((u) => u.billing === "monthly").reduce((s, u) => s + u.price, 0);
@@ -104,7 +86,7 @@ export function StackComposer() {
 
   return (
     <Instrument
-      index={5}
+      index={6}
       id="compose"
       name="The Stack Composer"
       reads="How the upgrades you picked reinforce each other, and what the honest total is."
@@ -117,7 +99,7 @@ export function StackComposer() {
             if (mine.length === 0) return null;
             const tone = SERVICE_TONE[service.key]!;
             return (
-              <div key={service.key} className="phx-card p-5">
+              <div key={service.key} className="phx-card fx-panel p-5">
                 <div className="flex items-center gap-2.5">
                   <span className={cn("h-1.5 w-1.5 rounded-full", tone.dot)} />
                   <span className="eyebrow text-[0.58rem] text-muted-foreground">
@@ -172,7 +154,7 @@ export function StackComposer() {
 
         {/* ---- what it adds up to ---- */}
         <div className="flex flex-col gap-4">
-          <div className="phx-card min-h-[13rem] p-5 md:p-6">
+          <div className="phx-card fx-panel min-h-[13rem] p-5 md:p-6">
             <div className="eyebrow text-[0.58rem] text-muted-foreground">Your stack</div>
 
             {chosen.length === 0 ? (

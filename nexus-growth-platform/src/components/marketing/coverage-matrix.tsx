@@ -117,7 +117,7 @@ export function CoverageMatrix() {
       reads="Everything already running on your PHX/GROWTH account, and the few things nobody on it is doing."
     >
       <div className="grid gap-6 lg:grid-cols-[1.3fr_1fr]">
-        <div className="phx-card p-5 md:p-6">
+        <div className="phx-card fx-panel p-5 md:p-6">
           <div className="mb-5 flex flex-wrap items-center gap-x-5 gap-y-2">
             {(["crew", "desk", "loops", "gap"] as Band[]).map((b) => (
               <span key={b} className="flex items-center gap-2">
@@ -155,6 +155,8 @@ export function CoverageMatrix() {
                     "aspect-square rounded-[3px] border transition-all duration-150",
                     "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan",
                     on ? BAND[c.band].on : BAND[c.band].cell,
+                    // Only the gaps breathe. The covered cells are settled.
+                    c.band === "gap" && !on && "fx-breathe",
                   )}
                 />
               );

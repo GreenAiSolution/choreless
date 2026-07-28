@@ -11,6 +11,7 @@ import {
   type Confidence,
 } from "@/lib/instruments/entity";
 import { Instrument, Readout, Figure } from "@/components/marketing/instrument";
+import { usePlayground } from "@/components/marketing/playground";
 import { pulse } from "@/components/marketing/pulse";
 
 /**
@@ -60,9 +61,10 @@ const CONFIDENCE: Record<
   },
 };
 
-export function AnswerEngineInspector({ onAdd }: { onAdd?: (key: string) => void }) {
-  const [name, setName] = React.useState("");
-  const [answers, setAnswers] = React.useState<EntityAnswers>({});
+export function AnswerEngineInspector() {
+  // State lives in the playground so instrument 02 can read the same answers.
+  const { entity: answers, setEntity: setAnswers, business: name, setBusiness: setName, add, justSeeded } =
+    usePlayground();
 
   const reading = React.useMemo(() => readEntity(answers), [answers]);
   const json = React.useMemo(() => entityJsonLd(answers, name), [answers, name]);
@@ -100,7 +102,7 @@ export function AnswerEngineInspector({ onAdd }: { onAdd?: (key: string) => void
     >
       <div className="grid gap-6 lg:grid-cols-[1.15fr_1fr]">
         {/* ---- the attribute grid ---- */}
-        <div className="phx-card p-5 md:p-6">
+        <div className={cn("phx-card fx-panel p-5 md:p-6", justSeeded && "fx-sheen")}>
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div className="min-w-0 flex-1">
               <label htmlFor={nameId} className="eyebrow text-[0.6rem] text-muted-foreground">
@@ -136,6 +138,7 @@ export function AnswerEngineInspector({ onAdd }: { onAdd?: (key: string) => void
                       "group flex w-full items-start gap-3 rounded-lg border px-3 py-2.5 text-left transition-colors",
                       "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan",
                       c.cell,
+                      justSeeded && confidence !== "absent" && "fx-flash",
                     )}
                   >
                     <span className={cn("mt-[0.4rem] h-1.5 w-1.5 shrink-0 rounded-full", c.dot)} />
@@ -228,7 +231,7 @@ export function AnswerEngineInspector({ onAdd }: { onAdd?: (key: string) => void
               : "Nothing on this instrument is missing. Run the Corroboration Web below to check the sources actually agree with each other."
         }
         upgradeKey={reading.resolvable && reading.inferred === 0 ? undefined : "answer-engine"}
-        onAdd={onAdd}
+        onAdd={add}
       />
     </Instrument>
   );
