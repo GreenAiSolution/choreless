@@ -9,7 +9,7 @@ import { Instrument, Readout, Figure, Dial } from "@/components/marketing/instru
 import { usePlayground } from "@/components/marketing/playground";
 
 /**
- * INSTRUMENT 03 — THE RESPONSE CLOCK
+ * INSTRUMENT 04 — THE RESPONSE CLOCK
  *
  * Every owner knows they miss calls. Almost none can describe the shape of
  * what happens next, because it happens while they are under a sink.

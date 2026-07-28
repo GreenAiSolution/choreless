@@ -14,9 +14,9 @@ import { usePlayground } from "@/components/marketing/playground";
 import { FxCanvas } from "@/components/marketing/fx";
 
 /**
- * INSTRUMENT 04 — THE MARGINAL DOLLAR
+ * INSTRUMENT 05 — THE MARGINAL DOLLAR
  *
- * The instrument that sells nothing, and the reason the other five are worth
+ * The instrument that sells nothing, and the reason the other six are worth
  * reading.
  *
  * Owners compare channels on average cost per lead. It is the wrong number and
@@ -37,7 +37,7 @@ import { FxCanvas } from "@/components/marketing/fx";
  *   That is not modesty. Every owner reading this page has been through a
  *   funnel that diagnosed a problem it happened to sell the cure for, and they
  *   discount everything they read afterwards. One instrument that says "not
- *   ours" is what makes the other five credible.
+ *   ours" is what makes the other six credible.
  *
  * THE CURVATURE SLIDER STARTS AT LINEAR
  *   At 1.0 the model has no diminishing returns and the tool reports no

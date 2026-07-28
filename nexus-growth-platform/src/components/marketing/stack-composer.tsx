@@ -15,9 +15,9 @@ import { Instrument, Figure } from "@/components/marketing/instrument";
 import { usePlayground } from "@/components/marketing/playground";
 
 /**
- * INSTRUMENT 05 — THE STACK COMPOSER
+ * INSTRUMENT 06 — THE STACK COMPOSER
  *
- * Where five readouts become one number.
+ * Where six readouts become one number.
  *
  * Every instrument above ends by adding something here, so by the time a
  * visitor arrives the stack is usually already half built by their own

@@ -12,14 +12,14 @@ import { useCountUp, Reveal } from "@/components/marketing/fx";
  * The shared chassis every instrument is mounted in.
  *
  * DIRECTION
- *   Six instruments on one page have to read as six panels of one machine, not
- *   six widgets somebody found. That means the frame is identical every time —
+ *   Seven instruments on one page have to read as seven panels of one machine,
+ *   not seven widgets somebody found. That means the frame is identical every time —
  *   index, name, the one line saying what it reads, the working area, and a
  *   readout — and only the working area differs.
  *
  * THE READOUT IS THE POINT
  *   Each instrument ends in a verdict, and a verdict is allowed to say
- *   "nothing here is for you". One of the six concludes that PHX/GROWTH
+ *   "nothing here is for you". One of the seven concludes that PHX/GROWTH
  *   already does this and sells nothing at all. That is deliberate: an
  *   instrument that can only ever point at a product is not an instrument, it
  *   is a quiz with a coupon at the end, and every owner reading this has taken
@@ -28,14 +28,22 @@ import { useCountUp, Reveal } from "@/components/marketing/fx";
 
 export type Verdict = "clear" | "gap" | "covered";
 
-const TONE: Record<Verdict, { ring: string; text: string; dot: string; label: string }> = {
+const TONE: Record<
+  Verdict,
+  { ring: string; text: string; dot: string; label: string }
+> = {
   clear: {
     ring: "border-signal/30",
     text: "text-signal",
     dot: "bg-signal",
     label: "Clear",
   },
-  gap: { ring: "border-gold/35", text: "text-gold", dot: "bg-gold", label: "Gap found" },
+  gap: {
+    ring: "border-gold/35",
+    text: "text-gold",
+    dot: "bg-gold",
+    label: "Gap found",
+  },
   covered: {
     ring: "border-cyan/30",
     text: "text-cyan",
@@ -59,23 +67,28 @@ export function Instrument({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="scroll-mt-24 border-t border-white/[0.06] py-16 md:py-20">
+    <section
+      id={id}
+      className="scroll-mt-24 border-t border-white/[0.06] py-16 md:py-20"
+    >
       <div className="container">
         <Reveal>
-        <header className="flex flex-col gap-3 md:flex-row md:items-baseline md:gap-6">
-          <span className="font-mono text-[0.7rem] tabular-nums tracking-[0.3em] text-cyan">
-            {String(index).padStart(2, "0")}
-          </span>
-          <div className="min-w-0">
-            <h2 className="text-[1.75rem] font-bold leading-[1.1] tracking-tight md:text-4xl">
-              {name}
-            </h2>
-            <p className="mt-2 max-w-2xl text-[0.95rem] leading-relaxed text-muted-foreground">
-              <span className="eyebrow mr-2 text-[0.6rem] text-muted-foreground/60">Reads</span>
-              {reads}
-            </p>
-          </div>
-        </header>
+          <header className="flex flex-col gap-3 md:flex-row md:items-baseline md:gap-6">
+            <span className="font-mono text-[0.7rem] tabular-nums tracking-[0.3em] text-cyan">
+              {String(index).padStart(2, "0")}
+            </span>
+            <div className="min-w-0">
+              <h2 className="text-[1.75rem] font-bold leading-[1.1] tracking-tight md:text-4xl">
+                {name}
+              </h2>
+              <p className="mt-2 max-w-2xl text-[0.95rem] leading-relaxed text-muted-foreground">
+                <span className="eyebrow mr-2 text-[0.6rem] text-muted-foreground/60">
+                  Reads
+                </span>
+                {reads}
+              </p>
+            </div>
+          </header>
         </Reveal>
         <Reveal delay={80} className="mt-9">
           {children}
@@ -140,24 +153,38 @@ export function Readout({
       aria-live="polite"
     >
       <div className="flex flex-wrap items-center gap-2.5">
-        <span className={cn("h-1.5 w-1.5 rounded-full", tone.dot, verdict === "gap" && "fx-live text-gold")} />
-        <span className={cn("eyebrow text-[0.6rem]", tone.text)}>{tone.label}</span>
+        <span
+          className={cn(
+            "h-1.5 w-1.5 rounded-full",
+            tone.dot,
+            verdict === "gap" && "fx-live text-gold",
+          )}
+        />
+        <span className={cn("eyebrow text-[0.6rem]", tone.text)}>
+          {tone.label}
+        </span>
       </div>
 
       <p className="mt-3 text-lg font-semibold leading-snug tracking-tight md:text-xl">
         {headline}
       </p>
-      <p className="mt-2 max-w-2xl text-[0.9rem] leading-relaxed text-muted-foreground">{body}</p>
+      <p className="mt-2 max-w-2xl text-[0.9rem] leading-relaxed text-muted-foreground">
+        {body}
+      </p>
 
       {upgrade ? (
         <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-3 border-t border-white/[0.07] pt-5">
           <div className="min-w-0">
-            <div className="eyebrow text-[0.58rem] text-muted-foreground/70">What closes it</div>
+            <div className="eyebrow text-[0.58rem] text-muted-foreground/70">
+              What closes it
+            </div>
             <div className="mt-1 font-semibold">{upgrade.name}</div>
           </div>
           <div className="font-mono text-sm tabular-nums text-muted-foreground">
             {formatCurrency(upgrade.price)}
-            <span className="text-xs">{upgrade.billing === "monthly" ? "/mo" : " once"}</span>
+            <span className="text-xs">
+              {upgrade.billing === "monthly" ? "/mo" : " once"}
+            </span>
           </div>
           <button
             type="button"
@@ -170,7 +197,9 @@ export function Readout({
                 new CustomEvent("phx:toggle-upgrade", { detail: upgrade.key }),
               );
               pulse("upgrade_added", upgrade.key);
-              document.getElementById("compose")?.scrollIntoView({ behavior: "smooth" });
+              document
+                .getElementById("compose")
+                ?.scrollIntoView({ behavior: "smooth" });
             }}
             className="pill-primary ml-auto text-sm"
           >
@@ -179,7 +208,9 @@ export function Readout({
         </div>
       ) : (
         <div className="mt-5 border-t border-white/[0.07] pt-5">
-          <div className="eyebrow text-[0.58rem] text-muted-foreground/70">What we sell for it</div>
+          <div className="eyebrow text-[0.58rem] text-muted-foreground/70">
+            What we sell for it
+          </div>
           <div className="mt-1 font-semibold text-cyan">Nothing.</div>
         </div>
       )}
@@ -228,7 +259,11 @@ export function Dial({
         onChange={(e) => onChange(Number(e.target.value))}
         className="mt-2 w-full accent-cyan"
       />
-      {hint && <p className="mt-1 text-[0.7rem] leading-relaxed text-muted-foreground/70">{hint}</p>}
+      {hint && (
+        <p className="mt-1 text-[0.7rem] leading-relaxed text-muted-foreground/70">
+          {hint}
+        </p>
+      )}
     </div>
   );
 }
@@ -284,13 +319,20 @@ export function Toggle({
         aria-hidden
       >
         {checked && (
-          <svg viewBox="0 0 10 10" className="h-2.5 w-2.5" fill="none" stroke="currentColor">
+          <svg
+            viewBox="0 0 10 10"
+            className="h-2.5 w-2.5"
+            fill="none"
+            stroke="currentColor"
+          >
             <path d="M1 5l2.5 2.5L9 2" strokeWidth="2" strokeLinecap="round" />
           </svg>
         )}
       </span>
       <span className="min-w-0">
-        <span className="block truncate text-[0.85rem] leading-tight">{label}</span>
+        <span className="block truncate text-[0.85rem] leading-tight">
+          {label}
+        </span>
         {sublabel && (
           <span className="mt-0.5 block truncate text-[0.7rem] text-muted-foreground">
             {sublabel}
@@ -332,11 +374,22 @@ export function Figure({
   }[tone];
   return (
     <div className="min-w-0">
-      <div className={cn("font-mono text-2xl font-bold tabular-nums tracking-tight md:text-3xl", color)}>
+      <div
+        className={cn(
+          "font-mono text-2xl font-bold tabular-nums tracking-tight md:text-3xl",
+          color,
+        )}
+      >
         {shown}
-        {unit && <span className="ml-1 text-sm font-normal text-muted-foreground">{unit}</span>}
+        {unit && (
+          <span className="ml-1 text-sm font-normal text-muted-foreground">
+            {unit}
+          </span>
+        )}
       </div>
-      <div className="mt-1 text-[0.72rem] leading-snug text-muted-foreground">{caption}</div>
+      <div className="mt-1 text-[0.72rem] leading-snug text-muted-foreground">
+        {caption}
+      </div>
     </div>
   );
 }

@@ -26,31 +26,32 @@ import { SeedButton } from "@/components/marketing/playground";
  *   asking to be believed. An owner who has been pitched by four agencies this
  *   year does not read those. They have a working filter for them.
  *
- *   So there is no argument left on the page. There are six instruments, and
+ *   So there is no argument left on the page. There are seven instruments, and
  *   each one takes something the visitor cannot currently see about their own
- *   business and makes it legible: what a model can determine about them, who
- *   corroborates them, what the five minutes after a missed call actually look
- *   like, where the next advertising dollar should go. The only claims made
- *   are arithmetic performed on numbers the visitor typed.
+ *   business and makes it legible: what a model can determine about them,
+ *   which questions silently exclude them, who corroborates them, what the
+ *   five minutes after a missed call actually look like, where the next
+ *   advertising dollar should go. The only claims made are arithmetic
+ *   performed on numbers the visitor typed.
  *
  *   The selling happens as a consequence. An instrument finds a gap, names
  *   what closes it, and the readout adds it to the stack. If it finds nothing,
  *   it says so.
  *
- * WHY ONE OF THE SIX SELLS NOTHING
+ * WHY ONE OF THE SEVEN SELLS NOTHING
  *   The Marginal Dollar concludes that PHX/GROWTH already does this, on a
  *   fifteen-minute loop, and offers no upgrade at all. Every owner reading this
  *   has been through a diagnostic that happened to diagnose exactly what its
  *   author was selling, and they discount everything downstream of it. One
- *   instrument that can say "not ours" is what buys the other five their
+ *   instrument that can say "not ours" is what buys the other six their
  *   credibility.
  *
  * BLUEPRINTS
- *   Server component. The instruments are the only client code, each an island
- *   with its own state, communicating with the enquiry basket through one
- *   `phx:toggle-upgrade` event rather than a store. Every price resolves
- *   through the catalogue, and `/api/reserve` recomputes the total server-side
- *   regardless — a posted price is user input.
+ *   Server component. `<Deck />` is the single client boundary; the seven
+ *   instruments share one store behind it, which is what lets the Inspector's
+ *   answers drive the Query Fan and one button fill every panel at once. Every
+ *   price resolves through the catalogue, and `/api/reserve` recomputes the
+ *   total server-side regardless — a posted price is user input.
  */
 
 function structuredData() {

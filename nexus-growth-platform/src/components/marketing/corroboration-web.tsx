@@ -14,7 +14,7 @@ import { FxCanvas } from "@/components/marketing/fx";
 import { pulse } from "@/components/marketing/pulse";
 
 /**
- * INSTRUMENT 02 — THE CORROBORATION WEB
+ * INSTRUMENT 03 — THE CORROBORATION WEB
  *
  * Drawn on canvas because the subject is a shape.
  *
