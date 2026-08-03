@@ -2,3 +2,4 @@
 .~lock.*
 *.bak
 node_modules/
+.env
