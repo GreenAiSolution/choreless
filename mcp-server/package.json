@@ -1,0 +1,14 @@
+{
+  "name": "choreless-mcp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MCP server for the Omniagent repo: inspect the n8n agent catalog, personas, tools, site structure and GTM docs.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "zod": "^3.23.8"
+  }
+}

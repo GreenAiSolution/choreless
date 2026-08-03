@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "choreless": {
+      "command": "node",
+      "args": ["mcp-server/server.mjs"]
+    }
+  }
+}
