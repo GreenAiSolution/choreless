@@ -1,0 +1,48 @@
+<evaluation>
+  <!--
+    Evaluations for meridian-mcp-server. Each answer is deterministic and
+    verifiable by string comparison. Questions 1-7 are answerable read-only via
+    meridian_list_node_types; questions 8-10 require authoring and running a
+    workflow, whose outcome is fully deterministic given the inputs.
+  -->
+  <qa_pair>
+    <question>Using the Meridian MCP server, how many distinct node types are available in the catalog?</question>
+    <answer>14</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>In the Meridian node-type catalog, what category does the 'http.request' node type belong to?</question>
+    <answer>Integrations</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>In the Meridian catalog, which node type belongs to the 'AI' category?</question>
+    <answer>llm.complete</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>In Meridian, the 'condition' node has two output ports. Which port does it emit on when its boolean expression evaluates to truthy?</question>
+    <answer>true</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>In Meridian, list the input port names of the 'merge' node type, in the order given, separated by a comma and a space.</question>
+    <answer>a, b</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>In the Meridian catalog, which two node types have zero input ports (i.e. they are entry points)? List their type identifiers alphabetically, separated by a comma and a space.</question>
+    <answer>manual.input, trigger</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>In Meridian, what is the default value of the 'ms' config field on the 'delay' node type?</question>
+    <answer>500</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Create a Meridian workflow with a 'manual.input' node emitting {"amount": 150} into a 'condition' node whose expression is "input.in.amount > 100", with a 'template' node on the true port and another 'template' node on the false port. Run it. What is the status (succeeded/failed/skipped) of the node connected to the condition's 'false' port?</question>
+    <answer>skipped</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>In Meridian, create and run a workflow with a single 'transform' node (no inbound edges) whose config output is {"doubled": "{{ 21 * 2 }}"}. What integer value does the 'doubled' field hold in the node's output?</question>
+    <answer>42</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Call meridian_run_workflow with an id that does not exist. Does the tool return an error result (true) or a successful run (false)? Answer true or false.</question>
+    <answer>true</answer>
+  </qa_pair>
+</evaluation>

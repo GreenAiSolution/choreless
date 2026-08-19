@@ -1,0 +1,35 @@
+{
+  "name": "meridian",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A visual automation-map platform: model any business as a graph of nodes and run it as a live workflow engine.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "meridian-mcp-server": "dist/mcp/index.js"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "mcp": "tsx src/mcp/index.ts",
+    "mcp:serve": "node dist/mcp/index.js",
+    "mcp:http": "tsx src/mcp/http-index.ts",
+    "mcp:http:serve": "node dist/mcp/http-index.js",
+    "build": "tsc -p tsconfig.build.json",
+    "serve": "node dist/index.js",
+    "test": "tsx --test test/*.test.ts",
+    "eval": "node evaluations/run-eval.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^4.4.3"
+  }
+}
